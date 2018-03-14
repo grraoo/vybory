@@ -1,0 +1,9 @@
+@import 'lib/vars';
+@import 'lib/mixins';
+@include normalize();
+
+h1 {
+  margin: 0;
+  line-height: 1;
+  font-size: 16px;
+}
