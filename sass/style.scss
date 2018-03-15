@@ -2,8 +2,101 @@
 @import 'lib/mixins';
 @include normalize();
 
-h1 {
-  margin: 0;
+.main-header {
+  margin-top: 0;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 130px;
+  color: #009CEB;
+  text-align: center;
+}
+
+.container {
+  margin: 0 auto;
+  width: 1600px;
+  font-family: 'PT Mono', monospace;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100vh;
+}
+
+.time {
+  width: 200px;
+  display: inline-block;
+  text-align: center;
+}
+
+.time-unit {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  width: 30%;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  margin: 0 3%;
+  font-size: 450px;
+  color: #000000;
+  font-family: 'Roboto Condensed', sans-serif;
+
+  &__captions {
+    display: flex;
+    justify-content: space-around;
+  }
+  &__caption {
+    opacity: 0.6;
+    font-size: 90px;
+    font-weight: bold;
+    color: #000000;
+    text-align: center;
+    margin: 0;
+
+  }
+}
+
+.point {
+  position: absolute;
+  top: 0;
+  left: 0;
+  &--one {
+    right: 0;
+    left: auto;
+  }
+}
+
+.odom {
+  position: relative;
+  height: 450px;
   line-height: 1;
-  font-size: 16px;
+  margin: 0 auto;
+  display: flex;
+}
+
+.delim {
+  position: absolute;
+  top: 50%;
+  right: auto;
+  left: 25%;
+  transform: translateY(-50%);
+  font-size: 450px;
+
+  &-sec {
+    left: auto;
+    right: 25%;
+  }
+}
+
+#timer {
+  display: none !important;
+  }
+
+.time-unit::after  {
+  content:'';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-image: linear-gradient(to top, #ffffff, transparent 16%, transparent 84%, #ffffff );
+  z-index: 1;
 }

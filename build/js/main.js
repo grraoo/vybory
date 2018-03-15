@@ -1,3 +1,6 @@
+(function () {
+'use strict';
+
 let dateEnd = new Date(2018, 2, 18, 21);
 
 let data = {
@@ -57,6 +60,10 @@ let countDown = setInterval(function () {
 }, 1000);
 
 let app = new Vue({
-  el: `#timer`,
+  el: `#countdown-timer`,
   data: data
 });
+
+}());
+
+//# sourceMappingURL=main.js.map
