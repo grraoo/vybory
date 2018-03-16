@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Counter</title>
+        <link href="css/style.css?v=18" rel="stylesheet">
+        <link href="css/css/flipclock.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:700&amp;subset=cyrillic" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=PT+Mono&amp;subset=cyrillic" rel="stylesheet">
+    </head>
+
+    <body>
+      <main class="container">
+        <h2 class="main-header main-header--counter">Количество опрошенных</h2>
+        <div id="counter">
+
+            <button @click="number++" class="btn">++</button>
+            <div class="voted-number">
+              <div class="numslide" v-for="(numbr, index) in arrnumber()" :style="setPosition(numbr)" :key="index">
+                  <div class="numslide__slide" v-for="(num, index) in numbers"  :key="index">{{ num }}</div>
+
+              </div>
+            </div>
+            <div class="genders">
+              <div class="percent percent--men">
+                {{ percent.men }}% <span>мужчин</span>
+              </div>
+              <div class="percent percent--women">
+                  <span>женщин</span> {{ percent.women }}%
+              </div>
+            </div>
+          </div>
+        </main>
+        <span class="servertimehours" timestamp="1521215320" hidden>12</span>
+        
+        <script src="js/vue.js"></script>
+
+        <script src="js/main.js"></script>
+    </body>
+
+</html>

@@ -12,7 +12,7 @@
 
     <body>
         <main class="container">
-            <h1 class="main-header">до конца голосования</h1>
+            <h1 class="main-header">До конца голосования</h1>
             <div id="countdown-timer">
                 <div class="odom">
                     <div class="time-unit time-unit--hours">
@@ -48,12 +48,14 @@
                   </div>
                       <div class="time-unit__captions">
 
-                        <p class="time-unit__caption time-unit__caption--hours">часов</p>
-                        <p class="time-unit__caption time-unit__caption--mins">минут</p>
-                        <p class="time-unit__caption time-unit__caption--secs">секунд</p>
+                        <p class="time-unit__caption time-unit__caption--hours">{{hoursWord()}}</p>
+                        <p class="time-unit__caption time-unit__caption--mins">{{minsWord()}}</p>
+                        <p class="time-unit__caption time-unit__caption--secs">{{secsWord()}}</p>
                       </div>
             </div>
         </main>
+        <span class="servertimehours" timestamp="1521215320" hidden>12</span>
+
         <script src="js/vue.js"></script>
 
         <script src="js/main.js"></script>
