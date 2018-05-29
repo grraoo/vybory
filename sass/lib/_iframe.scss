@@ -1,0 +1,32 @@
+.main {
+  display: flex;
+  height: 100vh;
+}
+
+.iframe_wrap {
+  display: flex;
+  flex-wrap: wrap;
+  flex-grow: 1;
+}
+
+.iframe {
+  border: 0;
+  overflow: visible;
+  &--wall {
+    width: 30%;
+  }
+  &--total {
+    width: 70%;
+  }
+  &--last {
+    flex-grow: 1;
+
+  }
+  &--sn {
+    flex-basis: 100%;
+    height: 20vh;
+  }
+  &--map {
+    flex-basis: 100%;
+  }
+}

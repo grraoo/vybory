@@ -1,64 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link href="css/style.css" rel="stylesheet">
+  <title>President Line</title>
+</head>
+<body>
 
-    <head>
-        <meta charset="UTF-8">
-        <title>Countdown</title>
-        <link href="css/style.css?v=18" rel="stylesheet">
-        <link href="css/css/flipclock.css" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:700&amp;subset=cyrillic" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css?family=PT+Mono&amp;subset=cyrillic" rel="stylesheet">
-    </head>
+  <main class="main">
+    <div id="iframe_wrap" class="iframe_wrap">
+      <iframe id="total" class="iframe iframe--total" src="total.html"></iframe>
+      <iframe id="last" class="iframe iframe--last" src="last.html"></iframe>
+      <iframe id="sn" class="iframe iframe--sn" src="socnet.html"></iframe>
+      <iframe id="map" class="iframe iframe--map" src="map.html"></iframe>
+    </div>
 
-    <body>
-        <main class="container">
-            <h1 class="main-header">До конца голосования</h1>
-            <div id="countdown-timer">
-                <div class="odom">
-                    <div class="time-unit time-unit--hours">
-                        <div class="decahours point point--deca" :style="decaHoursNum()">
-                            <div class="slide" v-for="num in numbers">{{ num }}</div>
-                        </div>
-                        <div class="onehours point point--one" :style="hoursNum()">
-                            <div class="slide" v-for="num in numbers">{{ num }}</div>
-                        </div>
-                    </div>
-
-                    <div class="delim">:</div>
-
-                    <div class="time-unit time-unit--mins">
-                        <div class="decamin point point--deca" :style="decaMinsNum()">
-                            <div class="slide" v-for="num in numbers">{{ num }}</div>
-                        </div>
-                        <div class="onemin point point--one" :style="MinsNum()">
-                            <div class="slide" v-for="num in numbers">{{ num }}</div>
-                        </div>
-                    </div>
-
-                    <div class="delim delim-sec">:</div>
-
-                    <div class="time-unit time-unit--secs">
-                        <div class="decasec point point--deca" :style="decaSecondsNum()">
-                            <div class="slide" v-for="num in numbers">{{ num }}</div>
-                        </div>
-                        <div class="onesec point point--one" :style="secondsNum()">
-                            <div class="slide" v-for="num in numbers">{{ num }}</div>
-                        </div>
-                    </div>
-                  </div>
-                      <div class="time-unit__captions">
-
-                        <p class="time-unit__caption time-unit__caption--hours">{{hoursWord()}}</p>
-                        <p class="time-unit__caption time-unit__caption--mins">{{minsWord()}}</p>
-                        <p class="time-unit__caption time-unit__caption--secs">{{secsWord()}}</p>
-                      </div>
-            </div>
-        </main>
-        <span class="servertimehours" timestamp="1521215320" hidden>12</span>
-
-        <script src="js/vue.js"></script>
-
-        <script src="js/main.js"></script>
-    </body>
-
+    <iframe id="wall" class="iframe iframe--wall" src="wall.html"></iframe>
+  </main>
+</body>
 </html>
