@@ -1,0 +1,91 @@
+@import 'lib/vars';
+@import 'lib/mixins';
+@include normalize();
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding-left: 5vw;
+}
+
+.big-num {
+  font-family: "Arial";
+  font-size: 20vw;
+  color: $c-blue;
+  font-weight: 900;
+  margin: 0;
+  line-height: 1.1;
+  position: relative;
+  &--up::after {
+    content: 'up';
+    display: inline-block;
+    margin-left: 5%;
+    font-size: 50%;
+    line-height: 2;
+    vertical-align: middle;
+  }
+  &--down::after {
+    content: 'down';
+    display: inline-block;
+    margin-left: 5%;
+    font-size: 50%;
+    line-height: 2;
+    vertical-align: middle;
+    color: red;
+  }
+}
+
+.socnets {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 3vw;
+  height: 100%;
+  align-items: center;
+  &--big {
+    justify-content: center;
+    flex-wrap: wrap;
+    .socnet {
+      width: 50%;
+      justify-content: flex-start;
+      padding-left: 11%;
+      &__img {
+        height: 7.5vw;
+        margin-right: 1.5vw;
+      }
+      &__percents {
+        margin: 0;
+        font-size: 4.8vw;
+        margin-bottom: 0.1vw;
+      }
+      &__name {
+        margin: 0;
+        font-size: 2.3vw;
+      }
+    }
+  }
+}
+
+.socnet {
+  display: flex;
+  align-items: center;
+  &__percents {
+    line-height: 1;
+    margin: 0;
+    font-weight: bold;
+    font-size: 2.5vw;
+    margin-bottom: 0.4vw;
+  }
+  &__name {
+    line-height: 1;
+    margin: 0;
+    font-weight: bold;
+    font-size: 1.2vw;
+    color: #606060;
+  }
+  &__img {
+    width: auto;
+    margin-right: 0.5vw;
+    height: 4.5vw;
+  }
+}

@@ -1,0 +1,53 @@
+@import 'lib/vars';
+@import 'lib/mixins';
+@include normalize();
+
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  padding-left: 5vw;
+  padding-bottom: 5vw;
+  overflow: hidden;
+  position: relative;
+}
+
+.big-num {
+  font-family: "Arial";
+  font-size: 15vw;
+  color: #000000;
+  font-weight: 900;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.caption {
+  line-height: 1.2;
+  margin: 0;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 3vw;
+  color: #606060;
+  text-transform: uppercase;
+  letter-spacing: .1vw;
+
+  &__red {
+    color: red;
+  }
+}
+
+.hashtag {
+  color: #006DC4;
+}
+
+
+.main-map {
+  position: absolute;
+  height: 120%;
+  top: 0;
+  left: 0;
+  width: auto;
+  z-index: -1;
+  opacity: 0.5;
+}

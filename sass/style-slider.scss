@@ -1,0 +1,50 @@
+@import 'lib/vars';
+@import 'lib/mixins';
+
+@include normalize();
+
+
+@import 'lib/iframe-slider';
+
+.slider-controls {
+  display: flex;
+}
+
+.slider-control {
+  margin: 0;
+  border: 0;
+  outline: 0;
+  background-color: $c-blue;
+  color: white;
+  padding: 2vw;
+  font-size: 2vw;
+  width: 25%;
+
+  &--active {
+    background-color: #fff;
+    font-size: 0;
+    position: relative;
+    pointer-events: none;
+    &::after {
+      content: '';
+      width: 3vw;
+      height: 3vw;
+      border-radius: 50%;
+      background-color: $c-blue;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: slideBlink 2s linear infinite alternate;
+    }
+  }
+}
+
+@keyframes slideBlink {
+  0% {
+    background-color: $c-blue;
+  }
+  100% {
+    background-color: white;
+  }
+}

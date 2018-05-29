@@ -1,0 +1,63 @@
+@import 'lib/vars';
+@import 'lib/mixins';
+@include normalize();
+
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding-left: 5vw;
+}
+.big-num {
+  font-family: "Arial";
+  font-size: 20vw;
+  color: $c-blue;
+  font-weight: 900;
+  margin: 0;
+  line-height: 1.1;
+  position: relative;
+
+  &--up::after {
+    content: 'up';
+    display: inline-block;
+    margin-left: 5%;
+    font-size: 50%;
+    line-height: 2;
+    vertical-align: middle;
+  }
+
+  &--down::after {
+    content: 'down';
+    display: inline-block;
+    margin-left: 5%;
+    font-size: 50%;
+    line-height: 2;
+    vertical-align: middle;
+    color: red;
+  }
+}
+
+.caption {
+  line-height: 1.2;
+  margin: 0;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 4vw;
+  color: #606060;
+  text-transform: uppercase;
+  letter-spacing: .1vw;
+}
+
+.columns {
+  display: flex;
+  padding-right: 5vw;
+  align-items: flex-end;
+  margin-top: 2vh;
+}
+
+.column {
+  flex-grow: 1;
+  margin: 0.2vw;
+  background-color: rgba($c-blue, .5);
+}

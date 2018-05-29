@@ -1,0 +1,22 @@
+.main-frames {
+  display: flex;
+  height: 100vh;
+}
+
+.iframe_wrap {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.iframe {
+  border: 0;
+  outline: 1px solid #eee;
+  overflow: visible;
+  flex-grow: 1;
+
+  &--wall {
+    width: 25%;
+    flex-grow: 0;
+  }
+}

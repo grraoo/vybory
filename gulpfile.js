@@ -16,7 +16,7 @@ const sourcemaps = require('gulp-sourcemaps');
 const mocha = require('gulp-mocha');
 
 gulp.task('style', function () {
-  return gulp.src('sass/style.scss')
+  return gulp.src('sass/*.scss')
     .pipe(plumber())
     .pipe(sass())
     .pipe(postcss([
