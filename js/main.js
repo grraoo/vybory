@@ -9,7 +9,6 @@ const Slider = {
   frame: frame,
   get index() {
     const currentSlideId = sliderBtns.find((btn) => btn.classList.contains(`slider-control--active`)).dataset.slide;
-    console.log(slideIds.indexOf(currentSlideId));
     return slideIds.indexOf(currentSlideId);
   },
   next() {
@@ -22,7 +21,6 @@ const Slider = {
   prev() {
     const index = this.index;
     const slideId = this.slideIds[(index - 1 + this.slideIds.length) % this.slideIds.length];
-    // const btn = this.btns[index];
     const btn = this.btns.find((btn) => btn.dataset.slide === slideId);
     this.slide(btn);
   },
@@ -40,6 +38,8 @@ const Slider = {
   }
 }
 
+let autoPlay = setInterval(() => {Slider.next()}, 3000);
+
 sliderControl.addEventListener(`click`, (e) => {
   Slider.slide(e.target);
 })
@@ -48,9 +48,11 @@ document.addEventListener(`keyup`, (e) => {
   switch (e.keyCode) {
     case 32:
       Slider.next();
+      clearInterval(autoPlay);
       break;
     case 8:
       Slider.prev();
+      clearInterval(autoPlay);
       break;
     case 49:
     case 50:
@@ -62,8 +64,11 @@ document.addEventListener(`keyup`, (e) => {
     case 100:
       const index = parseInt(e.key, 10) - 1;
       Slider.slide(Slider.btns[index]);
+      clearInterval(autoPlay);
       break;
+    case 13:
+      autoPlay = setInterval(() => {Slider.next()}, 3000);
   }
 })
 
-setInterval(() => {Slider.next()}, 3000);
+
