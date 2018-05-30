@@ -11,11 +11,15 @@
 
   <main class="main-frames">
     <div id="iframe_wrap" class="iframe_wrap">
-      <iframe id="slide" class="iframe" src="total.html"></iframe>
-      <!-- <iframe id="last" class="iframe iframe--last" src="last.html"></iframe>
-      <iframe id="sn" class="iframe iframe--sn" src="socnet.html?frame=true"></iframe>
-      <iframe id="map" class="iframe iframe--map" src="map.html"></iframe> -->
-      <div class="slider-controls">
+      <div class="iframes">
+
+        <iframe id="total" class="iframe iframe--active" src="total.html"></iframe>
+        <iframe id="last" class="iframe" src="last.html"></iframe>
+        <iframe id="socnet" class="iframe" src="socnet.html"></iframe>
+        <iframe id="map" class="iframe" src="map.html"></iframe>
+
+      </div>
+      <div class="slider-controls slider-controls--animated">
         <button class="slider-control slider-control--active" type="button" data-slide="total">Количество</button>
         <button class="slider-control" type="button" data-slide="last">Скорость</button>
         <button class="slider-control" type="button" data-slide="socnet">Источники</button>
@@ -23,7 +27,7 @@
       </div>
     </div>
 
-    <iframe id="wall" class="iframe iframe--wall" src="wall.html"></iframe>
+    <iframe src="//president.snwall.ru/w/posts/"></iframe>
   </main>
   <script src="js/main.js"></script>
 </body>

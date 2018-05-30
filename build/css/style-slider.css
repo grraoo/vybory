@@ -226,25 +226,42 @@ h4 {
 .iframe_wrap {
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
+  position: relative; }
+
+.iframes {
+  position: relative;
   flex-grow: 1; }
 
 .iframe {
+  transition-duration: .3s;
   border: 0;
   outline: 1px solid #eee;
   overflow: visible;
-  flex-grow: 1; }
+  flex-grow: 1;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; }
   .iframe--wall {
     width: 25%;
     flex-grow: 0; }
+  .iframe--active {
+    opacity: 1;
+    z-index: 1; }
 
 .slider-controls {
   display: flex; }
+  .slider-controls--animated .slider-control--active::after {
+    animation: slideBlink 1.5s linear infinite alternate; }
 
 .slider-control {
   margin: 0;
   border: 0;
   outline: 0;
-  background-color: #1A87E1;
+  background-color: #006DC4;
   color: white;
   padding: 2vw;
   font-size: 2vw;
@@ -259,15 +276,14 @@ h4 {
       width: 3vw;
       height: 3vw;
       border-radius: 50%;
-      background-color: #1A87E1;
+      background-color: #006DC4;
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
-      animation: slideBlink 2s linear infinite alternate; }
+      transform: translate(-50%, -50%); }
 
 @keyframes slideBlink {
   0% {
-    background-color: #1A87E1; }
+    background-color: #006DC4; }
   100% {
     background-color: white; } }

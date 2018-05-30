@@ -1,3 +1,6 @@
+(function () {
+'use strict';
+
 // import regHiglight from "./regHiglight";
 // import numberWithSpaces from "./numberWithSpaces";
 // const currentState = window.currentState;
@@ -58,3 +61,7 @@
 // }
 
 // export default paintMap;
+
+}());
+
+//# sourceMappingURL=paintMap.js.map

@@ -229,26 +229,22 @@ h4 {
 .big-num {
   font-family: "Arial";
   font-size: 20vw;
-  color: #1A87E1;
+  color: #006DC4;
   font-weight: 900;
   margin: 0;
   line-height: 1.1;
   position: relative; }
   .big-num--up::after {
-    content: 'up';
+    content: url(../img/arrow-down.svg);
     display: inline-block;
     margin-left: 5%;
-    font-size: 50%;
-    line-height: 2;
-    vertical-align: middle; }
+    vertical-align: top;
+    line-height: 0.2; }
   .big-num--down::after {
-    content: 'down';
+    content: url(../img/arrow-down.svg);
     display: inline-block;
     margin-left: 5%;
-    font-size: 50%;
-    line-height: 2;
-    vertical-align: middle;
-    color: red; }
+    transform: rotate(180deg); }
 
 .caption {
   line-height: 1.2;
@@ -269,4 +265,4 @@ h4 {
 .column {
   flex-grow: 1;
   margin: 0.2vw;
-  background-color: rgba(26, 135, 225, 0.5); }
+  background-color: rgba(0, 109, 196, 0.5); }

@@ -28,34 +28,45 @@ const Slider = {
     this.slide(btn);
   },
   slide(btn) {
-    console.log(1, btn.classList, btn.dataset);
     const slideId = btn.dataset.slide;
-    if (slideId) {
+    if (slideId && slideId !== slideIds[this.index]) {
       const currentControl = sliderControl.querySelector(`.slider-control--active`);
       if (currentControl) {
         currentControl.classList.remove(`slider-control--active`);
       }
+      const currentSlide = document.querySelector(`.iframe--active`);
+      if (currentSlide) {
+        currentSlide.classList.remove(`iframe--active`);
+      }
+      document.getElementById(slideId).classList.add(`iframe--active`);
       btn.classList.add(`slider-control--active`);
-      this.frame.src = `${slideId}.html`;
+      // this.frame.src = `${slideId}.html`;
     }
   }
 };
 
-let autoPlay = setInterval(() => {Slider.next();}, 3000);
-
-sliderControl.addEventListener(`click`, (e) => {
-  Slider.slide(e.target);
-});
+let autoPlay = setInterval(() => {
+  Slider.next();
+}, 3000);
+const stopAutoPlay = (autoPlay) => {
+  clearInterval(autoPlay);
+  sliderControl.classList.remove(`slider-controls--animated`);
+};
+// sliderControl.addEventListener(`click`, (e) => {
+//   Slider.slide(e.target);
+// })
 
 document.addEventListener(`keyup`, (e) => {
   switch (e.keyCode) {
-    case 32:
+    case 32: //space
       Slider.next();
-      clearInterval(autoPlay);
+      stopAutoPlay(autoPlay);
+      autoPlay = null;
       break;
-    case 8:
+    case 8: //backspace
       Slider.prev();
-      clearInterval(autoPlay);
+      stopAutoPlay(autoPlay);
+      autoPlay = null;
       break;
     case 49:
     case 50:
@@ -64,15 +75,24 @@ document.addEventListener(`keyup`, (e) => {
     case 97:
     case 98:
     case 99:
-    case 100:
+    case 100: // numbers 1-4
       const index = parseInt(e.key, 10) - 1;
       Slider.slide(Slider.btns[index]);
-      clearInterval(autoPlay);
+      stopAutoPlay(autoPlay);
+      autoPlay = null;
       break;
-    case 13:
-      autoPlay = setInterval(() => {Slider.next();}, 3000);
+    case 13: //enter
+      if (!autoPlay) {
+        autoPlay = setInterval(() => {
+          Slider.next();
+        }, 3000);
+      }
+      sliderControl.classList.add(`slider-controls--animated`);
+
   }
 });
+
+// Slider.slide(Slider.btns[2]);
 
 }());
 

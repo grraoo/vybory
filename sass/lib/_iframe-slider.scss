@@ -7,9 +7,15 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  position: relative;
 }
 
+.iframes {
+  position: relative;
+  flex-grow: 1;
+}
 .iframe {
+  transition-duration: .3s;
   border: 0;
   outline: 1px solid #eee;
   overflow: visible;
@@ -18,5 +24,17 @@
   &--wall {
     width: 25%;
     flex-grow: 0;
+  }
+
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  &--active {
+    opacity: 1;
+    z-index: 1;
   }
 }

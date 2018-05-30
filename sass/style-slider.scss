@@ -8,6 +8,14 @@
 
 .slider-controls {
   display: flex;
+
+  &--animated {
+    .slider-control--active {
+      &::after {
+        animation: slideBlink 1.5s linear infinite alternate;
+      }
+    }
+  }
 }
 
 .slider-control {
@@ -35,7 +43,6 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      animation: slideBlink 2s linear infinite alternate;
     }
   }
 }

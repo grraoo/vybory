@@ -19,22 +19,19 @@
   position: relative;
 
   &--up::after {
-    content: 'up';
+    content: url(../img/arrow-down.svg);
     display: inline-block;
     margin-left: 5%;
-    font-size: 50%;
-    line-height: 2;
-    vertical-align: middle;
+    vertical-align: top;
+    line-height: 0.2;
   }
 
   &--down::after {
-    content: 'down';
+    content: url(../img/arrow-down.svg);
     display: inline-block;
     margin-left: 5%;
-    font-size: 50%;
-    line-height: 2;
-    vertical-align: middle;
-    color: red;
+
+    transform: rotate(180deg);
   }
 }
 
