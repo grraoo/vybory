@@ -12,7 +12,7 @@ html {
 body {
   margin: 0;
   box-sizing: border-box;
-  background-color: #ffffff;
+  background-color: #e0e0e0;
   height: 100%;
   width: 100%;
   display: flex;
@@ -229,7 +229,7 @@ h4 {
 .big-num {
   font-family: "Arial";
   font-size: 20vw;
-  color: #006DC4;
+  color: black;
   font-weight: 900;
   margin: 0;
   line-height: 1.1;
@@ -256,6 +256,9 @@ h4 {
   text-transform: uppercase;
   letter-spacing: .1vw; }
 
+.text-blue {
+  color: #006DC4; }
+
 .columns {
   display: flex;
   padding-right: 5vw;
@@ -265,4 +268,13 @@ h4 {
 .column {
   flex-grow: 1;
   margin: 0.2vw;
-  background-color: rgba(0, 109, 196, 0.5); }
+  background-image: linear-gradient(-152deg, #006dc4, rgba(0, 109, 196, 0.5));
+  position: relative; }
+  .column::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: .3vh;
+    background-color: #006DC4; }

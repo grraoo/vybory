@@ -45,25 +45,26 @@ const Slider = {
 let autoPlay = setInterval(() => {
   Slider.next()
 }, 3000);
-const stopAutoPlay = (autoPlay) => {
+const stopAutoPlay = () => {
   clearInterval(autoPlay);
   sliderControl.classList.remove(`slider-controls--animated`);
+  autoPlay = null;
 }
 // sliderControl.addEventListener(`click`, (e) => {
 //   Slider.slide(e.target);
 // })
 
-document.addEventListener(`keyup`, (e) => {
+window.addEventListener(`keyup`, (e) => {
   switch (e.keyCode) {
     case 32: //space
       Slider.next();
-      stopAutoPlay(autoPlay);
-      autoPlay = null;
+      stopAutoPlay();
+      // autoPlay = null;
       break;
     case 8: //backspace
       Slider.prev();
-      stopAutoPlay(autoPlay);
-      autoPlay = null;
+      stopAutoPlay();
+      // autoPlay = null;
       break;
     case 49:
     case 50:
@@ -75,8 +76,8 @@ document.addEventListener(`keyup`, (e) => {
     case 100: // numbers 1-4
       const index = parseInt(e.key, 10) - 1;
       Slider.slide(Slider.btns[index]);
-      stopAutoPlay(autoPlay);
-      autoPlay = null;
+      stopAutoPlay();
+      // autoPlay = null;
       break;
     case 13: //enter
       if (!autoPlay) {
@@ -89,4 +90,6 @@ document.addEventListener(`keyup`, (e) => {
   }
 })
 
-// Slider.slide(Slider.btns[2]);
+// Slider.slide(Slider.btns[1]);
+// stopAutoPlay();
+sliderBtns[1].focus();

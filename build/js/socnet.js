@@ -79,7 +79,6 @@ const countStats = () => {
     };
     return current.total.snets;
   }).then(total => {
-    console.log(total);
     for (const sn in total) {
       if (total.hasOwnProperty(sn)) {
         socnets.querySelector(`#${sn}`).innerText = total[sn];

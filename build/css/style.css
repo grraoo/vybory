@@ -192,7 +192,7 @@ html {
 body {
   margin: 0;
   box-sizing: border-box;
-  background-color: #ffffff;
+  background-color: #e0e0e0;
   height: 100%;
   width: 100%;
   display: flex;
@@ -409,6 +409,7 @@ h4 {
   flex-grow: 1; }
 
 .iframe {
+  pointer-events: none;
   border: 0;
   outline: 1px solid #eee;
   overflow: visible; }

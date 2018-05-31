@@ -12,7 +12,7 @@ html {
 body {
   margin: 0;
   box-sizing: border-box;
-  background-color: #ffffff;
+  background-color: #e0e0e0;
   height: 100%;
   width: 100%;
   display: flex;
@@ -234,11 +234,16 @@ h4 {
   flex-grow: 1; }
 
 .iframe {
+  pointer-events: none;
   transition-duration: .3s;
   border: 0;
   outline: 1px solid #eee;
   overflow: visible;
   flex-grow: 1;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
   opacity: 0;
   position: absolute;
   top: 0;
@@ -246,8 +251,11 @@ h4 {
   width: 100%;
   height: 100%; }
   .iframe--wall {
+    pointer-events: none;
     width: 25%;
-    flex-grow: 0; }
+    flex-grow: 0;
+    opacity: 1;
+    position: static; }
   .iframe--active {
     opacity: 1;
     z-index: 1; }
