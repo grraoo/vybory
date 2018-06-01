@@ -30,7 +30,7 @@
     content: url(../img/arrow-down.svg);
     display: inline-block;
     margin-left: 5%;
-
+    filter: grayscale(1) brightness(1.7);
     transform: rotate(180deg);
   }
 }

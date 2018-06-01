@@ -9,12 +9,13 @@ var getData = fetch(`https://dashboard.sn-mg.ru/service/monitoring/dashboards?re
  * @return {string}
  */
 function numberWithSpaces(x) {
-  if (x !== null && typeof x !== `undefined` && x !== ``) {
+  if (x !== null && typeof x !== `undefined` && x !== `` && x.toString().length > 4) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, `&thinsp;`);
   }
-  return `н/д`;
+  return x;
 }
 
+const TIMEOUT = 5000;
 const bigNum = document.querySelector(`.slider`);
 const map = document.querySelector(`.main-map`);
 let interval = 0;
@@ -103,7 +104,7 @@ const paintMap = () => {
       } else {
         map.style = ``;
       }
-    }, 5000);
+    }, TIMEOUT);
     console.log(interval);
   })
   .catch(error => {

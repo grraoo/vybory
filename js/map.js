@@ -1,6 +1,6 @@
 import getData from "./lib/fetch"
 import numberWithSpaces from "./lib/numberWithSpaces";
-
+const TIMEOUT = 5000;
 const bigNum = document.querySelector(`.slider`);
 const map = document.querySelector(`.main-map`);
 let interval = 0;
@@ -89,7 +89,7 @@ const paintMap = () => {
       } else {
         map.style = ``
       }
-    }, 5000);
+    }, TIMEOUT);
     console.log(interval);
   })
   .catch(error => {
