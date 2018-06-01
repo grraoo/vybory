@@ -274,9 +274,38 @@ h4 {
         margin: 0;
         font-size: 2.3vw; }
 
+@keyframes snBlink {
+  0% {
+    transform: scale(0); }
+  15% {
+    transform: scale(1); }
+  30% {
+    transform: scale(0.7); }
+  80% {
+    transform: scale(1.1); }
+  100% {
+    transform: scale(1); } }
+
+.animated .socnet {
+  animation-name: snBlink;
+  animation-duration: 1s;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards; }
+
 .socnet {
+  transform: scale(0);
   display: flex;
   align-items: center; }
+  .socnet--vk {
+    animation-delay: .3s; }
+  .socnet--fb {
+    animation-delay: 1.2s; }
+  .socnet--tw {
+    animation-delay: .6s; }
+  .socnet--inst {
+    animation-delay: .9s; }
+  .socnet--rest {
+    animation-delay: 1.5s; }
   .socnet__percents {
     line-height: 1;
     margin: 0;

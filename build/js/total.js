@@ -8,14 +8,18 @@ var getData = fetch(`https://dashboard.sn-mg.ru/service/monitoring/dashboards?re
  * @param {number} x
  * @return {string}
  */
-function numberWithSpaces(x) {
-  if (x !== null && typeof x !== `undefined` && x !== ``) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, `&thinsp;`);
-  }
-  return `н/д`;
-}
 
 const totalNumber = document.getElementById(`total-number`);
+const dataV = {
+  numberArr: [], numbers: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  setPosition: (num) => {
+    return `transform: translateY(-${num * 100}%); transition-duration: .3s;`;
+  }
+};
+const counter = new Vue({
+  el: `#total-number`,
+  data: dataV
+});
 
 const adoptTotal = (json => {
   const periods = json.datasheets.map(period => {
@@ -47,31 +51,27 @@ const adoptTotal = (json => {
 let interval;
 const reCountTotal = () => {
   getData.then(adoptTotal).then(periods => {
-    const to = periods.find(period => (new Date() < period.timeStamp));
-    const from = [...periods].reverse().find(period => (new Date() >= period.timeStamp));
+    const prev = [...periods].reverse().find(period => (new Date() >= period.timeStamp));
+    const to = periods.find(period => (new Date() < period.timeStamp)) || prev;
     const current = {
-      from: from,
+      prev: prev,
       to: to,
       get time() {
         return new Date()
       },
       get length() {
-        return this.to.timeStamp - this.from.timeStamp
+        return this.to.timeStamp - this.prev.timeStamp
       },
       get percent() {
-        return (this.time - this.from.timeStamp) / this.length
+        return (this.time - this.prev.timeStamp) / this.length
       },
       get total() {
-        return this.from.total() + (this.to.total() - this.from.total()) * this.percent;
-      },
-
-      get rest() {
-        return this.to.total() - this.total
+        return this.prev.total() + (this.to.total() - this.prev.total()) * this.percent;
       },
     };
     clearInterval(interval);
     interval = setInterval(() => {
-      totalNumber.innerHTML = numberWithSpaces(Math.round(current.total));
+      dataV.numberArr = (Math.round(current.total).toString().split(``)).map(num => parseInt(num));
     }, 1000);
   }).catch(error => {
     console.error(error);

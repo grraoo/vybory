@@ -262,8 +262,34 @@ h4 {
 
 .slider-controls {
   display: flex; }
-  .slider-controls--animated .slider-control--active::after {
-    animation: slideBlink 1.5s linear infinite alternate; }
+  .slider-controls--animated {
+    font-size: 0;
+    display: flex; }
+    .slider-controls--animated .bullit {
+      display: block;
+      width: 3vw;
+      height: 3vw;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%); }
+      .slider-controls--animated .bullit .color::after {
+        animation-name: slideBlink;
+        animation-duration: 10s;
+        animation-timing-function: linear;
+        animation-fill-mode: forwards;
+        animation-iteration-count: infinite; }
+      .slider-controls--animated .bullit .color-2::after {
+        animation-timing-function: linear;
+        animation-name: slideBlink;
+        animation-delay: 5s;
+        animation-duration: 10s;
+        animation-fill-mode: backwards;
+        animation-iteration-count: infinite; }
+
+.bullit {
+  display: none; }
 
 .slider-control {
   margin: 0;
@@ -275,23 +301,64 @@ h4 {
   font-size: 2vw;
   width: 25%; }
   .slider-control--active {
-    background-color: #fff;
+    background-color: #e0e0e0;
     font-size: 0;
     position: relative;
     pointer-events: none; }
-    .slider-control--active::after {
-      content: '';
-      width: 3vw;
-      height: 3vw;
-      border-radius: 50%;
-      background-color: #006DC4;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%); }
 
 @keyframes slideBlink {
   0% {
-    background-color: #006DC4; }
+    transform: rotate(180deg); }
+  50% {
+    transform: rotate(360deg); }
   100% {
-    background-color: white; } }
+    transform: rotate(360deg); } }
+
+.color {
+  border: 1px solid #006DC4;
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  left: calc(50% - 20px);
+  top: calc(50% - 20px);
+  width: 40px;
+  height: 40px;
+  clip: rect(0, 40px, 40px, 20px);
+  background: white; }
+  .color:after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    left: calc(50% - 20px);
+    top: calc(50% - 20px);
+    width: 40px;
+    height: 40px;
+    border: 1px solid #006DC4;
+    clip: rect(0, 20px, 40px, 0);
+    background: #006DC4;
+    transform: rotate(180deg); }
+
+.color-2 {
+  border: 1px solid #006DC4;
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  left: calc(50% - 20px);
+  top: calc(50% - 20px);
+  width: 40px;
+  height: 40px;
+  clip: rect(0, 40px, 40px, 20px);
+  transform: rotate(180deg);
+  background: white; }
+  .color-2:after {
+    border: 1px solid #006DC4;
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    left: calc(50% - 20px);
+    top: calc(50% - 20px);
+    width: 40px;
+    height: 40px;
+    clip: rect(0, 20px, 40px, 0);
+    background: #006DC4;
+    transform: rotate(180deg); }

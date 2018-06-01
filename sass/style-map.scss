@@ -49,4 +49,18 @@
   left: 0;
   width: auto;
   z-index: -1;
+  transition-duration: 1s;
+  transition-timing-function: ease;
+}
+
+.slide {
+  position: absolute;
+  bottom: 5vw;
+  left: 5vw;
+  opacity: 0;
+  transition-duration: .3s;
+
+  &--active {
+    opacity: 1;
+  }
 }

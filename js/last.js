@@ -3,7 +3,18 @@ import numberWithSpaces from "./lib/numberWithSpaces";
 
 const columns = document.querySelector(`.columns`);
 const bigNum = document.querySelector(`.big-num`);
-
+const growNum = (node, num) => {
+  console.log(node, num)
+  let temp = 0;
+  let grow = setInterval(() => {
+    if(temp++ <= num) {
+      node.innerHTML = numberWithSpaces(temp);
+    } else {
+      clearInterval(grow);
+      let temp = 0;
+    }
+  }, 5);
+}
 const adoptTotal = (json => {
   const periods = json.properties[`10min_dynamics`];
   const data = [];
@@ -28,7 +39,7 @@ const adoptTotal = (json => {
 
 const buildLast = () => {
   getData.then(adoptTotal).then(periods => {
-    const to = periods.find(period => (new Date() < period.timeStamp));
+    const to = periods.find(period => (new Date() < period.timeStamp)) || periods[periods.length - 1];
     const index = periods.indexOf(to);
     const periods8 = [];
     for (let i = index - 8; i < index; i++) {
@@ -39,13 +50,15 @@ const buildLast = () => {
     return periods8;
   }).then(current => {
     const max = Math.max(...current) * 5;
-    const average = Math.round(current.reduce((a, b) => a + b) / current.length);
+    const average = current[current.length - 1];
     const diff = current[current.length - 1] - current[current.length - 2];
     columns.innerHTML = ``;
     current.forEach(number => {
       const column = document.createElement(`div`);
+      const innerColumn = document.createElement(`div`);
       column.classList.add(`column`);
-      column.style = `height: calc(5 * ${(number) * 23 / max}vh)`;
+      innerColumn.style = `height: calc(5 * ${(number) * 23 / max}vh)`;
+      column.appendChild(innerColumn);
       columns.appendChild(column);
     });
     if (diff >= 0) {
@@ -55,7 +68,7 @@ const buildLast = () => {
       bigNum.classList.remove(`big-num--up`);
       bigNum.classList.add(`big-num--down`);
     }
-    bigNum.innerHTML = numberWithSpaces(average);
+    bigNum.dataset.average = average;
   }).catch(error => {
     console.error(error);
   });

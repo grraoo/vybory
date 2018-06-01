@@ -36,10 +36,10 @@ const adoptTotal = (json => {
 
 const countStats = () => {
   getData.then(adoptTotal).then(periods => {
-    const to = periods.find(period => (new Date() < period.timeStamp));
-    const from = [...periods].reverse().find(period => (new Date() >= period.timeStamp));
+    const prev = [...periods].reverse().find(period => (new Date() >= period.timeStamp));
+    const to = periods.find(period => (new Date() < period.timeStamp)) || prev;
     const current = {
-      from: from,
+      from: prev,
       to: to,
       get diff() {
         return this.to.total() - this.from.total();
@@ -76,9 +76,11 @@ const countStats = () => {
         socnets.querySelector(`#${sn}`).innerText = total[sn];
       }
     }
+    socnets.classList.add(`animated`);
+    // socnets.innerHTML = socnets.innerHTML;
   }).catch(error => {
     console.error(error)
   });
 }
 countStats();
-setInterval(countStats, 600000)
+setInterval(countStats, 10000)

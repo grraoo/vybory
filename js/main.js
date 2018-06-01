@@ -1,7 +1,21 @@
+import numberWithSpaces from "./lib/numberWithSpaces";
+const TIMEOUT = 10000;
 const sliderControl = document.querySelector(`.slider-controls`);
 const frame = document.getElementById(`slide`);
 const sliderBtns = [...sliderControl.querySelectorAll(`.slider-control`)];
 const slideIds = sliderBtns.map((btn) => btn.dataset.slide);
+const bullit = document.querySelector(`.bullit`);
+const growNum = (node, num) => {
+  console.log(node, num)
+  let temp = 0;
+  let grow = setInterval(() => {
+    if(Math.floor(temp+= num / 200) <= num) {
+      node.innerHTML = numberWithSpaces(Math.floor(temp));
+    } else {
+      clearInterval(grow);
+    }
+  }, 5);
+}
 
 const Slider = {
   btns: sliderBtns,
@@ -36,35 +50,42 @@ const Slider = {
         currentSlide.classList.remove(`iframe--active`);
       }
       document.getElementById(slideId).classList.add(`iframe--active`);
+      if(slideId === `socnet`) {
+        const sn = document.querySelector(`#socnet`).contentWindow.document.querySelector(`.socnets`);
+        sn.innerHTML = sn.innerHTML;
+      } else if(slideId === `last`) {
+        const boo = document.querySelector(`#last`).contentWindow.document.querySelector(`.columns`);
+        boo.innerHTML = boo.innerHTML;
+        const bigNum = document.querySelector(`#last`).contentWindow.document.querySelector(`.big-num`);
+        growNum(document.querySelector(`#last`).contentWindow.document.querySelector(`.big-num`), document.querySelector(`#last`).contentWindow.document.querySelector(`.big-num`).dataset.average);
+
+      }
       btn.classList.add(`slider-control--active`);
-      // this.frame.src = `${slideId}.html`;
+      btn.appendChild(bullit);
     }
   }
 }
 
 let autoPlay = setInterval(() => {
   Slider.next()
-}, 3000);
+}, TIMEOUT);
 const stopAutoPlay = () => {
   clearInterval(autoPlay);
   sliderControl.classList.remove(`slider-controls--animated`);
   autoPlay = null;
 }
-// sliderControl.addEventListener(`click`, (e) => {
-//   Slider.slide(e.target);
-// })
 
 window.addEventListener(`keyup`, (e) => {
   switch (e.keyCode) {
     case 32: //space
       Slider.next();
       stopAutoPlay();
-      // autoPlay = null;
+
       break;
     case 8: //backspace
       Slider.prev();
       stopAutoPlay();
-      // autoPlay = null;
+
       break;
     case 49:
     case 50:
@@ -77,13 +98,13 @@ window.addEventListener(`keyup`, (e) => {
       const index = parseInt(e.key, 10) - 1;
       Slider.slide(Slider.btns[index]);
       stopAutoPlay();
-      // autoPlay = null;
+
       break;
     case 13: //enter
       if (!autoPlay) {
         autoPlay = setInterval(() => {
           Slider.next()
-        }, 3000);
+        }, TIMEOUT);
       }
       sliderControl.classList.add(`slider-controls--animated`)
 

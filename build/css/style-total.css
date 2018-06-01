@@ -228,11 +228,27 @@ h4 {
 
 .big-num {
   font-family: "Arial";
-  font-size: 20vw;
+  font-size: 18vw;
   color: #000000;
   font-weight: 900;
   margin: 0;
-  line-height: 1.1; }
+  line-height: 1.1;
+  height: 1.1em;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  overflow: hidden; }
+
+.numslide {
+  position: relative;
+  line-height: 1.1;
+  transition-duration: .3s;
+  width: .7em; }
+  .numslide:nth-child(3n):not(:last-child) {
+    margin-left: 0.2em; }
+  .numslide__slide {
+    display: block;
+    transition-duration: .3s; }
 
 .caption {
   line-height: 1.2;

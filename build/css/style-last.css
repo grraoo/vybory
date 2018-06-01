@@ -263,13 +263,27 @@ h4 {
   display: flex;
   padding-right: 5vw;
   align-items: flex-end;
-  margin-top: 2vh; }
+  margin-top: 2vh;
+  height: 23vh; }
+
+@keyframes columnBlink {
+  0% {
+    background-position: top right; }
+  100% {
+    background-position: bottom left; } }
+
+@keyframes growColumn {
+  0% {
+    max-height: 0; }
+  100% {
+    max-height: 23vh; } }
 
 .column {
   flex-grow: 1;
-  margin: 0.2vw;
-  background-image: linear-gradient(-152deg, #006dc4, rgba(0, 109, 196, 0.5));
-  position: relative; }
+  margin: 0 1.5vw;
+  background-size: 200% 200%;
+  position: relative;
+  animation: columnBlink 2s linear infinite alternate; }
   .column::before {
     content: '';
     position: absolute;
@@ -278,3 +292,36 @@ h4 {
     right: 0;
     height: .3vh;
     background-color: #006DC4; }
+  .column div {
+    animation: growColumn .5s ease forwards;
+    max-height: 0; }
+  .column:nth-child(1) {
+    background-color: #F4F4F4; }
+  .column:nth-child(2) {
+    background-color: #F4F4F4; }
+    .column:nth-child(2) div {
+      animation-delay: .2s; }
+  .column:nth-child(3) {
+    background-color: #B6BCCC; }
+    .column:nth-child(3) div {
+      animation-delay: .4s; }
+  .column:nth-child(4) {
+    background-color: #9FABCB; }
+    .column:nth-child(4) div {
+      animation-delay: .6s; }
+  .column:nth-child(5) {
+    background-color: #869BC9; }
+    .column:nth-child(5) div {
+      animation-delay: .8s; }
+  .column:nth-child(6) {
+    background-color: #6B8BC8; }
+    .column:nth-child(6) div {
+      animation-delay: 1s; }
+  .column:nth-child(7) {
+    background-color: #497CC6; }
+    .column:nth-child(7) div {
+      animation-delay: 1.2s; }
+  .column:nth-child(8) {
+    background-color: #006DC4; }
+    .column:nth-child(8) div {
+      animation-delay: 1.4s; }

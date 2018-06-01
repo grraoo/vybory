@@ -10,14 +10,45 @@
   display: flex;
 
   &--animated {
+    font-size: 0;
+    display: flex;
     .slider-control--active {
-      &::after {
-        animation: slideBlink 1.5s linear infinite alternate;
+
+    }
+    .bullit {
+      display: block;
+      width: 3vw;
+      height: 3vw;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+        .color {
+          &::after {
+            animation-name: slideBlink;
+            animation-duration: 10s;
+            animation-timing-function: linear;
+            animation-fill-mode: forwards;
+            animation-iteration-count: infinite
+          }
+        }
+        .color-2 {
+          &::after {
+            animation-timing-function: linear;
+            animation-name:   slideBlink;
+            animation-delay: 5s;
+            animation-duration: 10s;
+            animation-fill-mode: backwards;
+            animation-iteration-count: infinite
+        }
       }
     }
   }
 }
-
+.bullit {
+  display: none;
+}
 .slider-control {
   margin: 0;
   border: 0;
@@ -28,30 +59,63 @@
   font-size: 2vw;
   width: 25%;
 
+
   &--active {
-    background-color: #fff;
+    background-color: #e0e0e0;
     font-size: 0;
     position: relative;
     pointer-events: none;
-    &::after {
-      content: '';
-      width: 3vw;
-      height: 3vw;
-      border-radius: 50%;
-      background-color: $c-blue;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
   }
 }
 
 @keyframes slideBlink {
   0% {
-    background-color: $c-blue;
+    transform: rotate(180deg);
+  }
+  50% {
+    transform: rotate(360deg);
   }
   100% {
-    background-color: white;
+    transform: rotate(360deg);
+  }
+}
+
+@mixin circle($size) {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  left: calc(50% - #{$size/2});
+  top: calc(50% - #{$size/2});
+  width: $size;
+  height: $size;
+}
+
+$wheel: 40px;
+.color {
+  border: 1px solid $c-blue;
+  @include circle($wheel);
+  clip: rect(0, $wheel, $wheel, #{$wheel/2});
+  background: white;
+  &:after {
+    @include circle($wheel);
+    border: 1px solid $c-blue;
+    clip: rect(0, #{$wheel/2}, $wheel, 0);
+    background: $c-blue;
+    transform:rotate(180deg);
+  }
+}
+
+.color-2 {
+  border: 1px solid $c-blue;
+  @include circle($wheel);
+  clip: rect(0, $wheel, $wheel, #{$wheel/2});
+  transform: rotate(180deg);
+  background: white;
+  &:after {
+    border: 1px solid $c-blue;
+    @include circle($wheel);
+    clip: rect(0, #{$wheel/2}, $wheel, 0);
+    background: $c-blue;
+    transform:rotate(180deg);
   }
 }
