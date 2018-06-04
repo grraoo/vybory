@@ -327,7 +327,7 @@ const Slider = {
   slideIds: slideIds,
   _timeout: Timeouts,
   autoPlay: true,
-  interval: 0,
+  interval: null,
   get timeout() {
     return this._timeout[this.slideIds[this.index]];
   },
@@ -387,16 +387,18 @@ const Slider = {
 };
 
 let autoPlay = setTimeout(() => {
-    Slider.next();
-  }, Slider.timeout);
+  Slider.next();
+}, Slider.timeout);
 const stopAutoPlay = () => {
   clearTimeout(Slider.interval);
+  clearTimeout(autoPlay);
   sliderControl.classList.remove(`slider-controls--animated`);
   Slider.autoPlay = false;
   Slider.interval = null;
 };
 
-window.addEventListener(`keyup`, (e) => {
+window.addEventListener(`keydown`, (e) => {
+  console.log(e.key);
   switch (e.key) {
     case `5`:
       fullscreen3(document.documentElement);
@@ -414,11 +416,41 @@ window.addEventListener(`keyup`, (e) => {
     case `1`:
     case `2`:
     case `3`:
-    case `4`: // numbers 1-4
-      const index = parseInt(e.key, 10) - 1;
+    // case `4`: // numbers 1-4
       stopAutoPlay();
-      Slider.slide(Slider.btns[index]);
+      const index = parseInt(e.key, 10) - 1;
+      Slider.slide(Slider.btns[index], stop);
       break;
+    // case `!`:
+    // case `End`:
+    //   if (e.shiftKey) {
+    //     stopAutoPlay(Slider.timeout);
+    //     Slider.slide(Slider.btns[0]);
+    //     const frame = document.querySelector(`#${Slider.btns[0].dataset.slide}`);
+    //     console.log(frame);
+    //     fullscreen3(frame);
+    //   }
+    //   break;
+    // case `@`:
+    // case `ArrowDown`:
+    //   if (e.shiftKey) {
+    //     stopAutoPlay(Slider.timeout);
+    //     Slider.slide(Slider.btns[1]);
+    //     const frame = document.querySelector(`#${Slider.btns[1].dataset.slide}`);
+    //     console.log(frame);
+    //     fullscreen3(frame);
+    //   }
+    //   break;
+    // case `#`:
+    // case `PageDown`:
+    //   if (e.shiftKey) {
+    //     stopAutoPlay(Slider.timeout);
+    //     Slider.slide(Slider.btns[2]);
+    //     const frame = document.querySelector(`#${Slider.btns[2].dataset.slide}`);
+    //     console.log(frame);
+    //     fullscreen3(frame);
+    //   }
+    //   break;
     case `Enter`: //enter
       if (!Slider.autoPlay) {
         Slider.autoPlay = true;
@@ -426,6 +458,8 @@ window.addEventListener(`keyup`, (e) => {
       }
       sliderControl.classList.add(`slider-controls--animated`);
   }
+
+
 });
 
 // Slider.slide(Slider.btns[2]);
