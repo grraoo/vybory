@@ -219,7 +219,7 @@ h4 {
   height: 100%;
   right: 0; }
 
-.main {
+#map .main {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -229,7 +229,7 @@ h4 {
   overflow: hidden;
   position: relative; }
 
-.big-num {
+#map .big-num {
   font-family: "Arial";
   font-size: 15vw;
   color: #000000;
@@ -237,7 +237,7 @@ h4 {
   margin: 0;
   line-height: 1.1; }
 
-.caption {
+#map .caption {
   line-height: 1.2;
   margin: 0;
   font-family: sans-serif;
@@ -246,13 +246,13 @@ h4 {
   color: #606060;
   text-transform: uppercase;
   letter-spacing: .1vw; }
-  .caption__red {
+  #map .caption__red {
     color: red; }
 
-.hashtag {
+#map .hashtag {
   color: #006DC4; }
 
-.main-map {
+#map .main-map {
   position: absolute;
   height: 120%;
   top: 0;
@@ -262,11 +262,11 @@ h4 {
   transition-duration: 1s;
   transition-timing-function: ease; }
 
-.slide {
+#map .slide {
   position: absolute;
   bottom: 5vw;
   left: 5vw;
   opacity: 0;
   transition-duration: .3s; }
-  .slide--active {
+  #map .slide--active {
     opacity: 1; }

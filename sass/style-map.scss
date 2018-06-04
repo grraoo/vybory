@@ -2,7 +2,7 @@
 @import 'lib/mixins';
 @include normalize();
 
-.main {
+#map .main {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -13,7 +13,7 @@
   position: relative;
 }
 
-.big-num {
+#map .big-num {
   font-family: "Arial";
   font-size: 15vw;
   color: #000000;
@@ -22,7 +22,7 @@
   line-height: 1.1;
 }
 
-.caption {
+#map .caption {
   line-height: 1.2;
   margin: 0;
   font-family: sans-serif;
@@ -37,12 +37,11 @@
   }
 }
 
-.hashtag {
+#map .hashtag {
   color: #006DC4;
 }
 
-
-.main-map {
+#map .main-map {
   position: absolute;
   height: 120%;
   top: 0;
@@ -53,7 +52,7 @@
   transition-timing-function: ease;
 }
 
-.slide {
+#map .slide {
   position: absolute;
   bottom: 5vw;
   left: 5vw;

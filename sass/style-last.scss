@@ -2,20 +2,21 @@
 @import 'lib/mixins';
 @include normalize();
 
-.main {
+#last .main {
   display: flex;
   flex-direction: column;
   justify-content: center;
   height: 100%;
-  padding-left: 5vw;
+  padding-left: 4vw;
+  padding-bottom: 0;
 }
-.big-num {
+#last .big-num {
   font-family: "Arial";
-  font-size: 20vw;
+  font-size: 16vw;
   color: black;
   font-weight: 900;
   margin: 0;
-  line-height: 1.1;
+  line-height: 1;
   position: relative;
 
   &--up::after {

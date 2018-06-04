@@ -226,9 +226,9 @@ h4 {
   height: 100%;
   padding-left: 5vw; }
 
-.big-num {
+#total .big-num {
   font-family: "Arial";
-  font-size: 18vw;
+  font-size: 13.5vw;
   color: #000000;
   font-weight: 900;
   margin: 0;

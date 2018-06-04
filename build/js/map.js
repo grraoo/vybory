@@ -1,7 +1,5 @@
-(function () {
+var map = (function () {
 'use strict';
-
-var getData = fetch(`https://dashboard.sn-mg.ru/service/monitoring/dashboards?reportId=12253`).then(response => response.json());
 
 /**
  * makes space-divided number
@@ -15,106 +13,122 @@ function numberWithSpaces(x) {
   return x;
 }
 
-const TIMEOUT = 5000;
-const bigNum = document.querySelector(`.slider`);
-const map = document.querySelector(`.main-map`);
-let interval = 0;
-const adoptTotal = (json => {
-  return json.datasheets.map(period => {
-      const timeStamp = new Date();
-      const time = period.title.split(`:`);
-      const [hours, minutes] = time;
-      timeStamp.setHours(hours);
-      timeStamp.setMinutes(minutes);
-      timeStamp.setSeconds(0);
-      const periodRegions = period.sheetData.regions.russia;
-      const regions = periodRegions;
+fetch(`https://dashboard.sn-mg.ru/service/monitoring/dashboards?reportId=12253`).then(response => response.json());
 
-      return {
-        timeStamp: timeStamp,
-        regions: regions
-      };
-    });
+const totalNumber = document.getElementById(`total-number`);
+
+const dataV = {
+  isActive: true,
+  _numberArr: [],
+  numbers: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  get numberArr() {
+    return this._numberArr;
+  },
+  setPosition: (num) => {
+    return `transform: translateY(-${num * 100}%); transition-duration: .3s;`;
+  }
+};
+const counter = new Vue({
+  el: `#total-number`,
+  data: dataV
 });
 
-const paintMap = () => {
-  getData.then(adoptTotal).then(periods => {
+const columns = document.querySelector(`.columns`);
+const bigNum$1 = document.querySelector(`#last .big-num`);
 
-    const to = periods.find(period => (new Date() < period.timeStamp)) || periods[periods.length - 1];
-    const current = {
-      to: to,
-      get total() {
-        const total = {
-          sum: 0,
-          regs: {}
-        };
-        let max = 0;
-        for (const reg in this.to.regions) {
-          if (this.to.regions.hasOwnProperty(reg)) {
+const TIMEOUT = 5000;
+const bigNum = document.querySelector(`#map .slider`);
+const mapSvg = document.querySelector(`.main-map`);
+let interval = 0;
 
-            const regValue = parseInt(this.to.regions[reg], 10) || 0;
-            if (regValue > max) {
-              total.max = reg;
-              max = regValue;
-            }
-            total.regs[reg] = regValue;
-            total.sum += regValue;
+const adoptMapData = (periods) => {
+  const to = periods.find(period => (new Date() < period.timeStamp)) || periods[periods.length - 1];
+  const current = {
+    to: to,
+    get total() {
+      const total = {
+        sum: 0,
+        regs: {}
+      };
+      let max = 0;
+      for (const reg in this.to.regions) {
+        if (this.to.regions.hasOwnProperty(reg)) {
+
+          const regValue = parseInt(this.to.regions[reg], 10) || 0;
+          if (regValue > max) {
+            total.max = reg;
+            max = regValue;
           }
-        }
-        return total;
-      }
-    };
-    return {max: current.total.regs[current.total.max], regs: current.total.regs};
-  }).then(total => {
-    const currentRegs = [];
-    for (const reg in total.regs) {
-      if (total.regs.hasOwnProperty(reg)) {
-        const value = (1 - 3 * (total.regs[reg] / total.max)).toFixed(2);
-        const region = document.getElementById(reg);
-        if(region && parseInt(value) < 1) {
-          currentRegs.push(reg);
-          region.style.fill = `rgba(0, 109, 196, ${1 - value})`;
-          bigNum.querySelector(`.slide--${reg} .big-num`).innerHTML = numberWithSpaces(total.regs[reg]);
+          total.regs[reg] = regValue;
+          total.sum += regValue;
         }
       }
+      return total;
     }
-    return currentRegs;
-  }).then(regs => {
-    const slides = regs.map(reg => bigNum.querySelector(`.slide--${reg}`));
-    if (interval) {
-      console.log(interval);
-      clearInterval(interval);
+  };
+  return {
+    max: current.total.regs[current.total.max],
+    regs: current.total.regs
+  };
+};
+// .then(adoptMapData).then(paintMap).then(startMapSlide)
+
+const paintMap = (total) => {
+  const currentRegs = [];
+  for (const reg in total.regs) {
+    if (total.regs.hasOwnProperty(reg)) {
+      const value = (1 - 3 * (total.regs[reg] / total.max)).toFixed(2);
+      const region = document.getElementById(reg);
+      if (region && parseInt(value) < 1) {
+        currentRegs.push(reg);
+        region.style.fill = `rgba(0, 109, 196, ${1 - value})`;
+        bigNum.querySelector(`.slide--${reg} .big-num`).innerHTML = numberWithSpaces(total.regs[reg]);
+      }
     }
-    interval = setInterval(() => {
+  }
+  return currentRegs;
+};
+const state = {
+  isActive: true
+};
+const startMapSlide = (regs) => {
+  const slides = regs.map(reg => bigNum.querySelector(`.slide--${reg}`));
+  if (interval) {
+    clearInterval(interval);
+  }
+
+  interval = setInterval(() => {
+    if (state.isActive) {
       const active = slides.find(slide => slide.classList.contains(`slide--active`));
-      if(active){
+      if (active) {
         active.classList.remove(`slide--active`);
       }
       const index = (slides.indexOf(active) + 1) % slides.length;
       slides[index].classList.add(`slide--active`);
-      if(regs[index] === `moscow`) {
-        map.style = `transform: translate(151%, 24%) scale(4.5);`;
-      } else if (regs[index] === `spb`){
-        map.style = `transform: translate(95%, 48%) scale(3);`;
-      } else if (regs[index] === `krasnoyarsk`){
-        map.style = `transform: translate(-7%, -18%) scale(1.3)`;
-      } else if (regs[index] === `nnovgorod`){
-        map.style = `transform: translate(96%, -8%) scale(3.2);`;
-
+      if (regs[index] === `moscow`) {
+        mapSvg.style = `transform: translate(151%, 24%) scale(4.5);`;
+      } else if (regs[index] === `spb`) {
+        mapSvg.style = `transform: translate(95%, 48%) scale(3);`;
+      } else if (regs[index] === `krasnoyarsk`) {
+        mapSvg.style = `transform: translate(-7%, -18%) scale(1.3)`;
+      } else if (regs[index] === `nnovgorod`) {
+        mapSvg.style = `transform: translate(96%, -8%) scale(3.2);`;
       } else {
-        map.style = ``;
+        mapSvg.style = ``;
       }
-    }, TIMEOUT);
-    console.log(interval);
-  })
-  .catch(error => {
-    console.error(error);
-  });
+    }
+  }, TIMEOUT);
+
 };
-paintMap();
-setTimeout(() => {
-  paintMap();
-}, 60000);
+
+var map = {
+  adopt: adoptMapData,
+  paint: paintMap,
+  startSlide: startMapSlide,
+  state: state
+};
+
+return map;
 
 }());
 

@@ -1,7 +1,5 @@
-(function () {
+var total = (function () {
 'use strict';
-
-var getData = fetch(`https://dashboard.sn-mg.ru/service/monitoring/dashboards?reportId=12253`).then(response => response.json());
 
 /**
  * makes space-divided number
@@ -10,8 +8,15 @@ var getData = fetch(`https://dashboard.sn-mg.ru/service/monitoring/dashboards?re
  */
 
 const totalNumber = document.getElementById(`total-number`);
+
+let interval;
 const dataV = {
-  numberArr: [], numbers: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  isActive: true,
+  _numberArr: [],
+  numbers: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+  get numberArr() {
+    return this._numberArr;
+  },
   setPosition: (num) => {
     return `transform: translateY(-${num * 100}%); transition-duration: .3s;`;
   }
@@ -20,65 +25,41 @@ const counter = new Vue({
   el: `#total-number`,
   data: dataV
 });
-
-const adoptTotal = (json => {
-  const periods = json.datasheets.map(period => {
-    const timeStamp = new Date();
-    const time = period.title.split(`:`);
-    const [hours, minutes] = time;
-    timeStamp.setHours(hours);
-    timeStamp.setMinutes(minutes);
-    timeStamp.setSeconds(0);
-    const periodTotal = period.sheetData.snetwork.total;
-    let sum = 0;
-    for (const sn in periodTotal) {
-      if (periodTotal.hasOwnProperty(sn)) {
-        sum += parseInt(periodTotal[sn], 10);
-      }
+const reCountTotal = (periods) => {
+  const prev = [...periods].reverse().find(period => (new Date() >= period.timeStamp));
+  const to = periods.find(period => (new Date() < period.timeStamp)) || prev;
+  const current = {
+    prev: prev,
+    to: to,
+    get time() {
+      return new Date()
+    },
+    get length() {
+      return this.to.timeStamp - this.prev.timeStamp
+    },
+    get diff() {
+      return this.to.total() - this.prev.total()
+    },
+    get percent() {
+      return (this.time - this.prev.timeStamp) / this.length
+    },
+    get total() {
+      return this.prev.total() + this.diff * this.percent;
+    },
+  };
+  clearInterval(interval);
+  interval = setInterval(() => {
+    if (dataV.isActive) {
+      dataV._numberArr = (Math.round(current.total).toString().split(``)).map(num => parseInt(num));
     }
-    return {
-      timeStamp: timeStamp,
-      _sum: parseInt(sum, 10),
-      total() {
-        return this._sum;
-      }
-    };
-  });
-
-  return periods;
-
-});
-let interval;
-const reCountTotal = () => {
-  getData.then(adoptTotal).then(periods => {
-    const prev = [...periods].reverse().find(period => (new Date() >= period.timeStamp));
-    const to = periods.find(period => (new Date() < period.timeStamp)) || prev;
-    const current = {
-      prev: prev,
-      to: to,
-      get time() {
-        return new Date()
-      },
-      get length() {
-        return this.to.timeStamp - this.prev.timeStamp
-      },
-      get percent() {
-        return (this.time - this.prev.timeStamp) / this.length
-      },
-      get total() {
-        return this.prev.total() + (this.to.total() - this.prev.total()) * this.percent;
-      },
-    };
-    clearInterval(interval);
-    interval = setInterval(() => {
-      dataV.numberArr = (Math.round(current.total).toString().split(``)).map(num => parseInt(num));
-    }, 1000);
-  }).catch(error => {
-    console.error(error);
-  });
+  }, 1000);
 };
-reCountTotal();
-setInterval(reCountTotal, 60000);
+// reCountTotal();
+// setInterval(reCountTotal, 60000);
+
+var total = {reCountTotal: reCountTotal, dataV: dataV};
+
+return total;
 
 }());
 

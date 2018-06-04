@@ -219,28 +219,29 @@ h4 {
   height: 100%;
   right: 0; }
 
-.main {
+#last .main {
   display: flex;
   flex-direction: column;
   justify-content: center;
   height: 100%;
-  padding-left: 5vw; }
+  padding-left: 4vw;
+  padding-bottom: 0; }
 
-.big-num {
+#last .big-num {
   font-family: "Arial";
-  font-size: 20vw;
+  font-size: 16vw;
   color: black;
   font-weight: 900;
   margin: 0;
-  line-height: 1.1;
+  line-height: 1;
   position: relative; }
-  .big-num--up::after {
+  #last .big-num--up::after {
     content: url(../img/arrow-down.svg);
     display: inline-block;
     margin-left: 5%;
     vertical-align: top;
     line-height: 0.2; }
-  .big-num--down::after {
+  #last .big-num--down::after {
     content: url(../img/arrow-down.svg);
     display: inline-block;
     margin-left: 5%;

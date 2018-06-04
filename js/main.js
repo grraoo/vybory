@@ -1,26 +1,51 @@
 import numberWithSpaces from "./lib/numberWithSpaces";
-const TIMEOUT = 10000;
+import load from "./lib/load";
+import totalScreen from "./total";
+import hashCnangeHandler from "../sass/lib/_hashchange";
+import mapScreen from "./map";
+
+load.reNew();
+
+const Timeouts = {
+  map: 5000,
+  total: 3000,
+  last: 3000
+}
+
 const sliderControl = document.querySelector(`.slider-controls`);
-const frame = document.getElementById(`slide`);
 const sliderBtns = [...sliderControl.querySelectorAll(`.slider-control`)];
 const slideIds = sliderBtns.map((btn) => btn.dataset.slide);
 const bullit = document.querySelector(`.bullit`);
 const growNum = (node, num) => {
-  console.log(node, num)
   let temp = 0;
   let grow = setInterval(() => {
-    if(Math.floor(temp+= num / 200) <= num) {
+    if (Math.floor(temp += num / 200) <= num) {
       node.innerHTML = numberWithSpaces(Math.floor(temp));
     } else {
       clearInterval(grow);
     }
   }, 5);
-}
+};
+
+const fullscreen3 = (element) => {
+  if (element.requestFullScreen) {
+    element.requestFullScreen();
+  } else if (element.mozRequestFullScreen) {
+    element.mozRequestFullScreen();
+  } else if (element.webkitRequestFullScreen) {
+    element.webkitRequestFullScreen();
+  }
+};
 
 const Slider = {
   btns: sliderBtns,
   slideIds: slideIds,
-  frame: frame,
+  _timeout: Timeouts,
+  autoPlay: true,
+  interval: 0,
+  get timeout() {
+    return this._timeout[this.slideIds[this.index]];
+  },
   get index() {
     const currentSlideId = sliderBtns.find((btn) => btn.classList.contains(`slider-control--active`)).dataset.slide;
     return slideIds.indexOf(currentSlideId);
@@ -45,72 +70,83 @@ const Slider = {
       if (currentControl) {
         currentControl.classList.remove(`slider-control--active`);
       }
+      btn.classList.add(`slider-control--active`);
+      btn.appendChild(bullit);
+
       const currentSlide = document.querySelector(`.iframe--active`);
       if (currentSlide) {
         currentSlide.classList.remove(`iframe--active`);
       }
-      document.getElementById(slideId).classList.add(`iframe--active`);
-      if(slideId === `socnet`) {
-        const sn = document.querySelector(`#socnet`).contentWindow.document.querySelector(`.socnets`);
-        sn.innerHTML = sn.innerHTML;
-      } else if(slideId === `last`) {
-        const boo = document.querySelector(`#last`).contentWindow.document.querySelector(`.columns`);
-        boo.innerHTML = boo.innerHTML;
-        const bigNum = document.querySelector(`#last`).contentWindow.document.querySelector(`.big-num`);
-        growNum(document.querySelector(`#last`).contentWindow.document.querySelector(`.big-num`), document.querySelector(`#last`).contentWindow.document.querySelector(`.big-num`).dataset.average);
+      const newSlide = document.getElementById(slideId);
+      newSlide.classList.add(`iframe--active`);
 
+      if (slideId === `socnet`) {
+        // const sn = document.querySelector(`.socnets`); // sn.innerHTML = sn.innerHTML;
+      } else if (slideId === `last`) {
+        const boo = document.querySelector(`.columns`);
+        boo.innerHTML = boo.innerHTML;
+        const bigNum = document.querySelector(`#last .big-num`);
+        growNum(document.querySelector(`#last .big-num`), document.querySelector(`#last .big-num`).dataset.average);
       }
-      btn.classList.add(`slider-control--active`);
-      btn.appendChild(bullit);
+      totalScreen.dataV.isActive = (slideId === `total`);
+      mapScreen.state.isActive = (slideId === `map`);
+      if (this.autoPlay) {
+        this.interval = setTimeout(() => {
+          this.next();
+        }, this.timeout);
+      } else {
+        clearTimeout(this.interval);
+      }
     }
   }
 }
 
-let autoPlay = setInterval(() => {
-  Slider.next()
-}, TIMEOUT);
+let autoPlay = setTimeout(() => {
+    Slider.next();
+  }, Slider.timeout);
 const stopAutoPlay = () => {
-  clearInterval(autoPlay);
+  clearTimeout(Slider.interval);
   sliderControl.classList.remove(`slider-controls--animated`);
-  autoPlay = null;
+  Slider.autoPlay = false;
+  Slider.interval = null;
 }
 
 window.addEventListener(`keyup`, (e) => {
-  switch (e.keyCode) {
-    case 32: //space
+  switch (e.key) {
+    case `5`:
+      fullscreen3(document.documentElement);
+      break;
+    case ` `: //space
+      stopAutoPlay();
       Slider.next();
-      stopAutoPlay();
 
       break;
-    case 8: //backspace
+    case `Backspace`: //backspace
+      stopAutoPlay();
       Slider.prev();
-      stopAutoPlay();
 
       break;
-    case 49:
-    case 50:
-    case 51:
-    case 52:
-    case 97:
-    case 98:
-    case 99:
-    case 100: // numbers 1-4
+    case `1`:
+    case `2`:
+    case `3`:
+    case `4`: // numbers 1-4
       const index = parseInt(e.key, 10) - 1;
-      Slider.slide(Slider.btns[index]);
       stopAutoPlay();
-
+      Slider.slide(Slider.btns[index]);
       break;
-    case 13: //enter
-      if (!autoPlay) {
-        autoPlay = setInterval(() => {
-          Slider.next()
-        }, TIMEOUT);
+    case `Enter`: //enter
+      if (!Slider.autoPlay) {
+        Slider.autoPlay = true;
+        Slider.next();
       }
       sliderControl.classList.add(`slider-controls--animated`)
-
   }
 })
 
-// Slider.slide(Slider.btns[1]);
+// Slider.slide(Slider.btns[2]);
 // stopAutoPlay();
+
 sliderBtns[1].focus();
+
+hashCnangeHandler();
+window.onhashchange = hashCnangeHandler;

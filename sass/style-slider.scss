@@ -57,12 +57,13 @@
   color: white;
   padding: 2vw;
   font-size: 2vw;
-  width: 25%;
+  flex-grow: 1;
 
 
   &--active {
     background-color: #e0e0e0;
-    font-size: 0;
+    // font-size: 0;
+    color: transparent;
     position: relative;
     pointer-events: none;
   }
@@ -119,3 +120,7 @@ $wheel: 40px;
     transform:rotate(180deg);
   }
 }
+
+@import 'style-total.scss';
+@import 'style-last.scss';
+@import 'style-map.scss';
