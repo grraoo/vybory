@@ -1,0 +1,52 @@
+@import 'lib/vars';
+@import 'lib/mixins';
+@include normalize();
+
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding-left: 5vw;
+}
+
+#total .big-num {
+  font-family: "Arial";
+  font-size: 13.5vw;
+  color: #000000;
+  font-weight: 900;
+  margin: 0;
+  line-height: 1.1;
+  height: 1.1em;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+.numslide {
+  position: relative;
+  line-height: 1.1;
+  transition-duration: .3s;
+  width: .7em;
+  &:nth-child(3n):not(:last-child) {
+    margin-left: 0.2em;
+  }
+  &__slide {
+    display: block;
+transition-duration: .3s;
+  }
+}
+.caption {
+  line-height: 1.2;
+  margin: 0;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 4vw;
+  color: #606060;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.hashtag {
+  color: #006DC4;
+}

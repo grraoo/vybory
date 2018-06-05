@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Total</title>
+  <link href="css/style-total.css" rel="stylesheet">
+  <script src="js/vue.js"></script>
+</head>
+
+<body>
+  <main class="main">
+    <p id="total-number" class="big-num">
+      <span class="numslide" v-for="num in numberArr.reverse()" :style="setPosition(num)">
+        <span class="numslide__slide" v-for="point in numbers">{{point}}</span>
+      </span>
+    </p>
+    <p class="caption">Сообщений размещено <br/>
+      в социальных сетях
+    </p>
+  </main>
+  <script src="js/total.js"></script>
+</body>
+
+</html>

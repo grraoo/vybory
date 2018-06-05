@@ -1,0 +1,68 @@
+@import 'lib/vars';
+@import 'lib/mixins';
+@include normalize();
+#map {
+  background-color: #c0c0c0;
+}
+#map .main {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  padding-left: 5vw;
+  padding-bottom: 5vw;
+  overflow: hidden;
+  position: relative;
+}
+
+#map .big-num {
+  font-family: "Arial";
+  font-size: 15vw;
+  color: #000000;
+  font-weight: 900;
+  margin: 0;
+  line-height: 1.1;
+}
+
+#map .caption {
+  text-shadow: 0 0 1px black;
+  line-height: 1.2;
+  margin: 0;
+  font-family: sans-serif;
+  font-weight: bold;
+  font-size: 3vw;
+  color: #606060;
+  text-transform: uppercase;
+  letter-spacing: .1vw;
+
+  &__red {
+    color: red;
+  }
+}
+
+#map .hashtag {
+  color: #006DC4;
+}
+
+#map .main-map {
+  position: absolute;
+  height: 120%;
+  top: 0;
+  left: 0;
+  width: auto;
+  z-index: -1;
+  transition-duration: 1s;
+  transition-timing-function: ease;
+}
+
+#map .slide {
+  position: absolute;
+  bottom: 5vw;
+  left: 5vw;
+  opacity: 0;
+  transition-duration: .3s;
+
+  &--active {
+    opacity: 1;
+  }
+}
