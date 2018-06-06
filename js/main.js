@@ -1,17 +1,17 @@
 import numberWithSpaces from "./lib/numberWithSpaces";
 import load from "./lib/load";
 import totalScreen from "./total";
-import hashCnangeHandler from "../sass/lib/_hashchange";
+import hashCnangeHandler from "./lib/_hashchange";
 import mapScreen from "./map";
 
 load.reNew();
 
 const Timeouts = {
-  total: 5001,
-  last: 5002,
-  socnet: 5003,
-  map: 10001,
-  wall: 0
+  total: 5000,
+  last: 5000,
+  socnet: 5000,
+  map: 10000,
+  wall: 10000
 };
 
 const sliderControl = document.querySelector(`.slider-controls`);
@@ -35,16 +35,6 @@ const growNum = (node, num) => {
   }, 20);
 };
 
-const fullscreen3 = (element) => {
-  if (element.requestFullScreen) {
-    element.requestFullScreen();
-  } else if (element.mozRequestFullScreen) {
-    element.mozRequestFullScreen();
-  } else if (element.webkitRequestFullScreen) {
-    element.webkitRequestFullScreen();
-  }
-};
-
 const Slider = {
   btns: sliderBtns,
   slideIds: slideIds,
@@ -65,7 +55,7 @@ const Slider = {
     const index = this.index;
 
     const slideId = this.slideIds[(index + 1) % this.slideIds.length];
-    this.slide(slideId);
+    this.slide(slideId, true);
   },
   prev() {
     const index = this.index;
@@ -74,7 +64,7 @@ const Slider = {
   },
 
   slide(slideId, flag) {
-    
+
     if (slideId === `wall` || (slideId && slideId !== slideIds[this.index]) ) {
       const btn = document.querySelector(`[data-slide="${slideId}"]`);
       const currentControl = sliderControl.querySelector(`.slider-control--active`);
@@ -112,6 +102,7 @@ const Slider = {
 
       } else if (slideId === `wall`) {
 
+        // if(flag) {
         if(flag) {
           wallPost.remove();
         } else {

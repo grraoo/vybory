@@ -13,7 +13,10 @@ function numberWithSpaces(x) {
   return x;
 }
 
-var getData = fetch(`https://dashboard.sn-mg.ru/service/monitoring/dashboards?reportId=12253`).then(response => response.json());
+var getData = fetch(`https://dashboard.sn-mg.ru/service/monitoring/dashboards?reportId=12253`).then(response => {
+
+  return response.json();
+});
 
 const totalNumber = document.getElementById(`total-number`);
 
@@ -115,9 +118,15 @@ const TIMEOUT = 3300;
 const bigNum$1 = document.querySelector(`#map .slider`);
 const mapSvg = document.querySelector(`.main-map`);
 const adoptMapData = (periods) => {
+  const prev = [...periods].reverse().find(period => (new Date() >= period.timeStamp));
   const to = periods.find(period => (new Date() < period.timeStamp)) || periods[periods.length - 1];
+  const diff = to.timeStamp - prev.timeStamp;
+  const percent = new Date() - prev.timeStamp;
   const current = {
     to: to,
+    prev: prev,
+    diff: diff,
+    percent: (percent / diff),
     get total() {
       const total = {
         sum: 0,
@@ -127,7 +136,7 @@ const adoptMapData = (periods) => {
       for (const reg in this.to.regions) {
         if (this.to.regions.hasOwnProperty(reg)) {
 
-          const regValue = parseInt(this.to.regions[reg], 10) || 0;
+          const regValue = Math.round(parseInt(this.prev.regions[reg], 10) + (parseInt(this.to.regions[reg], 10) - parseInt(this.prev.regions[reg], 10)) * this.percent) || 0;
           if (regValue > max) {
             total.max = reg;
             max = regValue;
@@ -150,7 +159,7 @@ const paintMap = (total) => {
   const currentRegs = [];
   for (const reg in total.regs) {
     if (total.regs.hasOwnProperty(reg)) {
-      const value = (1 - 3 * (total.regs[reg] / total.max)).toFixed(2);
+      const value = (1 - 8 * (total.regs[reg] / total.max)).toFixed(2);
       const region = document.getElementById(reg);
       if (region && parseInt(value) < 1) {
         currentRegs.push(reg);
@@ -160,8 +169,10 @@ const paintMap = (total) => {
       }
     }
   }
-  
-  return currentRegs;
+  const arr = [...currentRegs].reverse();
+  arr.unshift(arr.pop());
+  console.log(arr);
+  return arr;
 };
 const state = {
   isActive: true,
@@ -184,7 +195,7 @@ const mapSlide = (city) => {
   }
   let index = 0;
   if(city === `moscow`) {
-    index = 0;  
+    index = 0;
   } else {
     index = (slides.indexOf(active) + 1) % slides.length;
   }
@@ -195,11 +206,11 @@ const mapSlide = (city) => {
   region.style.opacity = `1`;
 
   if (regs[index] === `moscow`) {
-    mapSvg.style = `transform: translate(161%, 24%) scale(4.5);`;
+    mapSvg.style = `transform: rotate(-55deg) translate(178%, 26%) scale(4.7)`;
   } else if (regs[index] === `perm`) {
-    mapSvg.style = `transform: translate(66%, -28%) scale(3.2);`;
+    mapSvg.style = `transform: rotate(-35deg) translate(77%, -29%) scale(3.2);`;
   } else if (regs[index] === `tatarstan`) {
-    mapSvg.style = `transform: translate(131%, -53%) scale(4.5);`;
+    mapSvg.style = `transform: rotate(-25deg) translate(134%, -40%) scale(4.5)`;
   } else if (regs[index] === `spb`) {
     mapSvg.style = `transform: translate(95%, 48%) scale(3);`;
   } else if (regs[index] === `krasnoyarsk`) {
@@ -288,7 +299,18 @@ var socnet = {
   print: printStatsSn
 };
 
+const fullscreen3$1 = (element) => {
+  if (element.requestFullScreen) {
+    element.requestFullScreen();
+  } else if (element.mozRequestFullScreen) {
+    element.mozRequestFullScreen();
+  } else if (element.webkitRequestFullScreen) {
+    element.webkitRequestFullScreen();
+  }
+};
+
 const adoptTotal = (json => {
+
   const periods = {total:[], last:[], map:[]};
   const mapArr = [];
   const snArr = [];
@@ -363,6 +385,9 @@ const adoptTotal = (json => {
     }
   }
   periods.last = last$$1;
+
+
+
   return periods;
 
 });
@@ -372,8 +397,78 @@ const reNewData = () => {
     totalScreen.reCountTotal(total.total);
     last.show(last.build(total.last));
     socnet.print(socnet.build(total.sn));
+
     return total.map
   }).then(map.adopt).then(map.paint).then(map.startSlide)
+  .then(() => {
+    window.addEventListener(`keydown`, (e) => {
+      // console.log(e.key);
+      switch (e.key) {
+        case `f`:
+        case `а`:
+          fullscreen3$1(document.documentElement);
+          break;
+
+        case ` `: //space
+          stopAutoPlay();
+          Slider.next();
+          break;
+
+        case `Backspace`: //backspace
+          stopAutoPlay();
+          Slider.prev();
+          break;
+        case `w`:
+        case `ц`: //Цтена
+          stopAutoPlay();
+          Slider.slide(`wall`);
+          break;
+
+        case `1`:
+          stopAutoPlay();
+          Slider.slide(`total`);
+          break;
+        case `2`:
+          stopAutoPlay();
+          Slider.slide(`socnet`);
+          break;
+        case `3`:
+          stopAutoPlay();
+          Slider.slide(`last`);
+          break;
+        case `4`:
+          stopAutoPlay();
+          Slider.slide(`map`);
+          break;
+
+        case `5`: //wall w/o post
+          stopAutoPlay();
+          Slider.slide(`wall`, true);
+          break;
+        case `6`: //wall with post
+          stopAutoPlay();
+          Slider.slide(`wall`);
+          wallPost.hidden = false;
+          wallPost.style = `
+            animation: none;
+            opacity: 1;
+            left: 0;
+            right: 0;
+          `;
+          document.body.appendChild(wallPost);
+        break;
+
+        case `Enter`: //enter
+          if (!Slider.autoPlay) {
+            Slider.autoPlay = true;
+            setTimeout(() => {
+              Slider.next();
+            }, Slider.timeout);
+          }
+          sliderControl.classList.add(`slider-controls--animated`);
+      }
+    });
+  })
   .catch(error => {console.error(error);});
   };
 
@@ -395,21 +490,21 @@ var hashCnangeHandler = () => {
 dataStorage.reNew();
 
 const Timeouts = {
-  total: 5001,
-  last: 5002,
-  socnet: 5003,
-  map: 10001,
-  wall: 0
+  total: 5000,
+  last: 5000,
+  socnet: 5000,
+  map: 10000,
+  wall: 10000
 };
 
-const sliderControl = document.querySelector(`.slider-controls`);
-const sliderBtns = [...sliderControl.querySelectorAll(`.slider-control`)];
+const sliderControl$1 = document.querySelector(`.slider-controls`);
+const sliderBtns = [...sliderControl$1.querySelectorAll(`.slider-control`)];
 const slideIds = sliderBtns.map((btn) => {
   btn.style = `animation-duration: ${Timeouts[btn.dataset.slide]}ms`;
   return btn.dataset.slide;
 });
 const bullit = document.querySelector(`.bullit`);
-const wallPost = document.getElementById(`wallpost`);
+const wallPost$1 = document.getElementById(`wallpost`);
 
 const growNum = (node, num) => {
   let temp = 0;
@@ -423,17 +518,7 @@ const growNum = (node, num) => {
   }, 20);
 };
 
-const fullscreen3 = (element) => {
-  if (element.requestFullScreen) {
-    element.requestFullScreen();
-  } else if (element.mozRequestFullScreen) {
-    element.mozRequestFullScreen();
-  } else if (element.webkitRequestFullScreen) {
-    element.webkitRequestFullScreen();
-  }
-};
-
-const Slider = {
+const Slider$1 = {
   btns: sliderBtns,
   slideIds: slideIds,
   _timeout: Timeouts,
@@ -453,7 +538,7 @@ const Slider = {
     const index = this.index;
 
     const slideId = this.slideIds[(index + 1) % this.slideIds.length];
-    this.slide(slideId);
+    this.slide(slideId, true);
   },
   prev() {
     const index = this.index;
@@ -462,10 +547,10 @@ const Slider = {
   },
 
   slide(slideId, flag) {
-    
+
     if (slideId === `wall` || (slideId && slideId !== slideIds[this.index]) ) {
       const btn = document.querySelector(`[data-slide="${slideId}"]`);
-      const currentControl = sliderControl.querySelector(`.slider-control--active`);
+      const currentControl = sliderControl$1.querySelector(`.slider-control--active`);
       if (currentControl) {
         currentControl.classList.remove(`slider-control--active`);
       }
@@ -478,7 +563,7 @@ const Slider = {
       }
       const newSlide = document.getElementById(slideId);
       newSlide.classList.add(`iframe--active`);
-      wallPost.remove();
+      wallPost$1.remove();
 
       if (slideId === `socnet`) {
 
@@ -500,12 +585,13 @@ const Slider = {
 
       } else if (slideId === `wall`) {
 
+        // if(flag) {
         if(flag) {
-          wallPost.remove();
+          wallPost$1.remove();
         } else {
-          wallPost.hidden = false;
-          wallPost.style = `animation-duration: ${Slider._timeout.wall / 2}ms; animation-delay: ${Slider._timeout.wall / 2}ms`;
-          document.body.appendChild(wallPost);
+          wallPost$1.hidden = false;
+          wallPost$1.style = `animation-duration: ${Slider$1._timeout.wall / 2}ms; animation-delay: ${Slider$1._timeout.wall / 2}ms`;
+          document.body.appendChild(wallPost$1);
         }
       }
 
@@ -528,15 +614,15 @@ const Slider = {
 };
 
 let autoPlay = setTimeout(() => {
-  Slider.next();
-}, Slider.timeout);
+  Slider$1.next();
+}, Slider$1.timeout);
 
-const stopAutoPlay = () => {
-  Slider.autoPlay = false;
-  clearTimeout(Slider.interval);
+const stopAutoPlay$1 = () => {
+  Slider$1.autoPlay = false;
+  clearTimeout(Slider$1.interval);
   clearTimeout(autoPlay);
-  Slider.interval = null;
-  sliderControl.classList.remove(`slider-controls--animated`);
+  Slider$1.interval = null;
+  sliderControl$1.classList.remove(`slider-controls--animated`);
 };
 
 window.addEventListener(`keydown`, (e) => {
@@ -548,62 +634,62 @@ window.addEventListener(`keydown`, (e) => {
       break;
 
     case ` `: //space
-      stopAutoPlay();
-      Slider.next();
+      stopAutoPlay$1();
+      Slider$1.next();
       break;
 
     case `Backspace`: //backspace
-      stopAutoPlay();
-      Slider.prev();
+      stopAutoPlay$1();
+      Slider$1.prev();
       break;
     case `w`:
     case `ц`: //Цтена
-      stopAutoPlay();
-      Slider.slide(`wall`);
+      stopAutoPlay$1();
+      Slider$1.slide(`wall`);
       break;
 
     case `1`:
-      stopAutoPlay();
-      Slider.slide(`total`);
+      stopAutoPlay$1();
+      Slider$1.slide(`total`);
       break;
     case `2`:
-      stopAutoPlay();
-      Slider.slide(`socnet`);
+      stopAutoPlay$1();
+      Slider$1.slide(`socnet`);
       break;
     case `3`:
-      stopAutoPlay();
-      Slider.slide(`last`);
+      stopAutoPlay$1();
+      Slider$1.slide(`last`);
       break;
     case `4`:
-      stopAutoPlay();
-      Slider.slide(`map`);
+      stopAutoPlay$1();
+      Slider$1.slide(`map`);
       break;
 
     case `5`: //wall w/o post
-      stopAutoPlay();
-      Slider.slide(`wall`, true);
+      stopAutoPlay$1();
+      Slider$1.slide(`wall`, true);
       break;
     case `6`: //wall with post
-      stopAutoPlay();
-      Slider.slide(`wall`);
-      wallPost.hidden = false;
-      wallPost.style = `
+      stopAutoPlay$1();
+      Slider$1.slide(`wall`);
+      wallPost$1.hidden = false;
+      wallPost$1.style = `
         animation: none;
         opacity: 1;
         left: 0;
         right: 0;
       `;
-      document.body.appendChild(wallPost);
+      document.body.appendChild(wallPost$1);
     break;
 
     case `Enter`: //enter
-      if (!Slider.autoPlay) {
-        Slider.autoPlay = true;
+      if (!Slider$1.autoPlay) {
+        Slider$1.autoPlay = true;
         setTimeout(() => {
-          Slider.next();
-        }, Slider.timeout);
+          Slider$1.next();
+        }, Slider$1.timeout);
       }
-      sliderControl.classList.add(`slider-controls--animated`);
+      sliderControl$1.classList.add(`slider-controls--animated`);
   }
 });
 

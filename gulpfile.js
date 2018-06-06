@@ -16,7 +16,7 @@ const sourcemaps = require('gulp-sourcemaps');
 const mocha = require('gulp-mocha');
 
 gulp.task('style', function () {
-  return gulp.src('sass/*.scss')
+  return gulp.src('sass/style-slider.scss')
     .pipe(plumber())
     .pipe(sass())
     .pipe(postcss([
@@ -39,7 +39,7 @@ gulp.task('style', function () {
 });
 
 gulp.task('scripts', function () {
-  return gulp.src('js/*.js')
+  return gulp.src('js/main.js')
     .pipe(plumber())
     .pipe(sourcemaps.init())
     .pipe(rollup({}, 'iife'))
@@ -57,7 +57,7 @@ gulp.task('test', function () {
 });
 
 gulp.task('imagemin', ['copy'], function () {
-  return gulp.src('build/img/**/*.{jpg,png,gif,svg}')
+  return gulp.src('build/img/**/*.{jpg,png,gif}')
     .pipe(imagemin([
       imagemin.optipng({optimizationLevel: 3}),
       imagemin.jpegtran({progressive: true}),

@@ -6,9 +6,15 @@ const mapSvg = document.querySelector(`.main-map`);
 let interval = 0;
 
 const adoptMapData = (periods) => {
+  const prev = [...periods].reverse().find(period => (new Date() >= period.timeStamp));
   const to = periods.find(period => (new Date() < period.timeStamp)) || periods[periods.length - 1];
+  const diff = to.timeStamp - prev.timeStamp;
+  const percent = new Date() - prev.timeStamp;
   const current = {
     to: to,
+    prev: prev,
+    diff: diff,
+    percent: (percent / diff),
     get total() {
       const total = {
         sum: 0,
@@ -18,7 +24,7 @@ const adoptMapData = (periods) => {
       for (const reg in this.to.regions) {
         if (this.to.regions.hasOwnProperty(reg)) {
 
-          const regValue = parseInt(this.to.regions[reg], 10) || 0;
+          const regValue = Math.round(parseInt(this.prev.regions[reg], 10) + (parseInt(this.to.regions[reg], 10) - parseInt(this.prev.regions[reg], 10)) * this.percent) || 0;
           if (regValue > max) {
             total.max = reg;
             max = regValue;
@@ -41,7 +47,7 @@ const paintMap = (total) => {
   const currentRegs = [];
   for (const reg in total.regs) {
     if (total.regs.hasOwnProperty(reg)) {
-      const value = (1 - 3 * (total.regs[reg] / total.max)).toFixed(2);
+      const value = (1 - 8 * (total.regs[reg] / total.max)).toFixed(2);
       const region = document.getElementById(reg);
       if (region && parseInt(value) < 1) {
         currentRegs.push(reg);
@@ -51,8 +57,10 @@ const paintMap = (total) => {
       }
     }
   }
-  
-  return currentRegs;
+  const arr = [...currentRegs].reverse();
+  arr.unshift(arr.pop());
+  console.log(arr);
+  return arr;
 };
 const state = {
   isActive: true,
@@ -75,7 +83,7 @@ const mapSlide = (city) => {
   }
   let index = 0;
   if(city === `moscow`) {
-    index = 0;  
+    index = 0;
   } else {
     index = (slides.indexOf(active) + 1) % slides.length;
   }
@@ -86,11 +94,11 @@ const mapSlide = (city) => {
   region.style.opacity = `1`;
 
   if (regs[index] === `moscow`) {
-    mapSvg.style = `transform: translate(161%, 24%) scale(4.5);`
+    mapSvg.style = `transform: rotate(-55deg) translate(178%, 26%) scale(4.7)`
   } else if (regs[index] === `perm`) {
-    mapSvg.style = `transform: translate(66%, -28%) scale(3.2);`
+    mapSvg.style = `transform: rotate(-35deg) translate(77%, -29%) scale(3.2);`
   } else if (regs[index] === `tatarstan`) {
-    mapSvg.style = `transform: translate(131%, -53%) scale(4.5);`
+    mapSvg.style = `transform: rotate(-25deg) translate(134%, -40%) scale(4.5)`
   } else if (regs[index] === `spb`) {
     mapSvg.style = `transform: translate(95%, 48%) scale(3);`
   } else if (regs[index] === `krasnoyarsk`) {
@@ -98,7 +106,7 @@ const mapSlide = (city) => {
   } else if (regs[index] === `nnovgorod`) {
     mapSvg.style = `transform: translate(96%, -8%) scale(3.2);`
   } else {
-    mapSvg.style = ``
+    mapSvg.style = ``;
   }
 };
 
