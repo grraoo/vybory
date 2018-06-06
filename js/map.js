@@ -1,10 +1,8 @@
 import numberWithSpaces from "./lib/numberWithSpaces";
 import load from "./lib/load";
-const TIMEOUT = 3300;
-const bigNum = document.querySelector(`#map .slider`);
+const TIMEOUT = 2000;
+const bigNum$1 = document.querySelector(`#map .slider`);
 const mapSvg = document.querySelector(`.main-map`);
-let interval = 0;
-
 const adoptMapData = (periods) => {
   const prev = [...periods].reverse().find(period => (new Date() >= period.timeStamp));
   const to = periods.find(period => (new Date() < period.timeStamp)) || periods[periods.length - 1];
@@ -53,13 +51,12 @@ const paintMap = (total) => {
         currentRegs.push(reg);
         region.style.fill = `rgba(0, 109, 196, ${(1 - value)})`;
         region.style.opacity = `0.3`;
-        bigNum.querySelector(`.slide--${reg} .big-num`).innerHTML = numberWithSpaces(total.regs[reg]);
+        bigNum$1.querySelector(`.slide--${reg} .big-num`).innerHTML = numberWithSpaces(total.regs[reg]);
       }
     }
   }
-  const arr = [...currentRegs].reverse();
-  arr.unshift(arr.pop());
-  console.log(arr);
+  const arr = [...currentRegs];
+  arr.sort((a, b) => total.regs[a] < total.regs[b]).unshift(`russia`);
   return arr;
 };
 const state = {
@@ -72,7 +69,6 @@ const state = {
 const mapSlide = (city) => {
   const slides = state.slides;
   const regs = state.regs;
-
   const active = slides.find(slide => slide.classList.contains(`slide--active`));
 
   if (active) {
@@ -82,29 +78,32 @@ const mapSlide = (city) => {
     }
   }
   let index = 0;
-  if(city === `moscow`) {
+  if(city === `russia`) {
     index = 0;
   } else {
     index = (slides.indexOf(active) + 1) % slides.length;
   }
 
   slides[index].classList.add(`slide--active`);
-  const region = document.getElementById(regs[index]);
-  slides[index].dataset.region = region.id;
-  region.style.opacity = `1`;
+
+    const region = document.getElementById(regs[index]);
+    if(region) {
+    slides[index].dataset.region = region.id;
+    region.style.opacity = `1`;
+}
 
   if (regs[index] === `moscow`) {
-    mapSvg.style = `transform: rotate(-55deg) translate(178%, 26%) scale(4.7)`
+    mapSvg.style = `transform: rotate(-55deg) translate(178%, 26%) scale(4.7)`;
   } else if (regs[index] === `perm`) {
-    mapSvg.style = `transform: rotate(-35deg) translate(77%, -29%) scale(3.2);`
+    mapSvg.style = `transform: rotate(-35deg) translate(77%, -29%) scale(3.2);`;
   } else if (regs[index] === `tatarstan`) {
-    mapSvg.style = `transform: rotate(-25deg) translate(134%, -40%) scale(4.5)`
+    mapSvg.style = `transform: rotate(-25deg) translate(134%, -40%) scale(4.5)`;
   } else if (regs[index] === `spb`) {
-    mapSvg.style = `transform: translate(95%, 48%) scale(3);`
+    mapSvg.style = `transform: rotate(-60deg) translate(118%, 58%) scale(3.1);`;
   } else if (regs[index] === `krasnoyarsk`) {
-    mapSvg.style = `transform: translate(-7%, -18%) scale(1.3)`
+    mapSvg.style = `transform: translate(-7%, -18%) scale(1.3)`;
   } else if (regs[index] === `nnovgorod`) {
-    mapSvg.style = `transform: translate(96%, -8%) scale(3.2);`
+    mapSvg.style = `transform: translate(96%, -8%) scale(3.2);`;
   } else {
     mapSvg.style = ``;
   }
@@ -112,19 +111,22 @@ const mapSlide = (city) => {
 
 const startMapSlide = (regs) => {
   if(regs) {
-    state.regs = regs
+    state.regs = regs;
     return
   }
   regs = state.regs;
 
-  state.slides = regs.map(reg => bigNum.querySelector(`.slide--${reg}`));
+  state.slides = regs.map(reg => bigNum$1.querySelector(`.slide--${reg}`));
 
   if (state.interval) {
+    mapSvg.style = ``;
     clearInterval(state.interval);
   }
-  mapSlide(`moscow`);
-  state.interval = setInterval(mapSlide, TIMEOUT);
-}
+  // setTimeout(() => {
+    mapSlide(`russia`);
+    state.interval = setInterval(mapSlide, TIMEOUT);
+  // }, TIMEOUT);
+};
 
 export default {
   adopt: adoptMapData,
