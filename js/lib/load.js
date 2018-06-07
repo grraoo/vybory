@@ -4,19 +4,12 @@ import last from "../last";
 import map from "../map";
 import socnet from "../socnet";
 
-
-const fullscreen3 = (element) => {
-  if (element.requestFullScreen) {
-    element.requestFullScreen();
-  } else if (element.mozRequestFullScreen) {
-    element.mozRequestFullScreen();
-  } else if (element.webkitRequestFullScreen) {
-    element.webkitRequestFullScreen();
-  }
-};
-
 const adoptTotal = (json => {
-
+  if(json) {
+    window.localStorage.setItem(`serverData`, JSON.stringify(json));
+  } else  {
+    json = JSON.parse(window.localStorage.getItem(`serverData`));
+  }
   const periods = {total:[], last:[], map:[]};
   const mapArr = [];
   const snArr = [];
@@ -92,91 +85,22 @@ const adoptTotal = (json => {
   }
   periods.last = last;
 
-
-
   return periods;
 
 });
 
 const reNewData = () => {
-  getData.then(adoptTotal).then(total => {
+  getData.then(adoptTotal)
+  .then(total => {
     totalScreen.reCountTotal(total.total);
     last.show(last.build(total.last));
     socnet.print(socnet.build(total.sn));
 
     return total.map
-  }).then(map.adopt).then(map.paint).then(map.startSlide)
-  .then(() => {
-    window.addEventListener(`keydown`, (e) => {
-      // console.log(e.key);
-      switch (e.key) {
-        case `f`:
-        case `а`:
-          fullscreen3(document.documentElement);
-          break;
-
-        case ` `: //space
-          stopAutoPlay();
-          Slider.next();
-          break;
-
-        case `Backspace`: //backspace
-          stopAutoPlay();
-          Slider.prev();
-          break;
-        case `w`:
-        case `ц`: //Цтена
-          stopAutoPlay();
-          Slider.slide(`wall`);
-          break;
-
-        case `1`:
-          stopAutoPlay();
-          Slider.slide(`total`);
-          break;
-        case `2`:
-          stopAutoPlay();
-          Slider.slide(`socnet`);
-          break;
-        case `3`:
-          stopAutoPlay();
-          Slider.slide(`last`);
-          break;
-        case `4`:
-          stopAutoPlay();
-          Slider.slide(`map`);
-          break;
-
-        case `5`: //wall w/o post
-          stopAutoPlay();
-          Slider.slide(`wall`, true);
-          break;
-        case `6`: //wall with post
-          stopAutoPlay();
-          Slider.slide(`wall`);
-          wallPost.hidden = false;
-          wallPost.style = `
-            animation: none;
-            opacity: 1;
-            left: 0;
-            right: 0;
-          `;
-          document.body.appendChild(wallPost);
-        break;
-
-        case `Enter`: //enter
-          if (!Slider.autoPlay) {
-            Slider.autoPlay = true;
-            setTimeout(() => {
-              Slider.next();
-            }, Slider.timeout);
-          }
-          sliderControl.classList.add(`slider-controls--animated`);
-      }
-    });
   })
+  .then(map.adopt).then(map.paint).then(map.startSlide)
   .catch(error => {console.error(error)})
-  }
+}
 
 
 const dataStorage = {

@@ -37,7 +37,7 @@ const showLast = (current) => {
     bigNum.classList.remove(`big-num--up`);
     bigNum.classList.add(`big-num--down`);
   }
-  bigNum.dataset.average = average;
+  bigNum.dataset.average = average * (0.8 + (Math.random() * 0.2));
 };
 
 export default {

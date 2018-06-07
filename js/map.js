@@ -64,7 +64,10 @@ const state = {
   interval: null,
   svg: mapSvg
 };
-
+let Timeouts = {
+  russia: 0,
+  regs: 0
+}
 
 const mapSlide = (city) => {
   const slides = state.slides;
@@ -91,41 +94,57 @@ const mapSlide = (city) => {
     slides[index].dataset.region = region.id;
     region.style.opacity = `1`;
 }
-
+  clearTimeout(state.interval);
   if (regs[index] === `moscow`) {
+    state.interval = setTimeout(mapSlide, Timeouts.regs);
     mapSvg.style = `transform: rotate(-55deg) translate(178%, 26%) scale(4.7)`;
   } else if (regs[index] === `perm`) {
+    state.interval = setTimeout(mapSlide, Timeouts.regs);
     mapSvg.style = `transform: rotate(-35deg) translate(77%, -29%) scale(3.2);`;
   } else if (regs[index] === `tatarstan`) {
+    state.interval = setTimeout(mapSlide, Timeouts.regs);
     mapSvg.style = `transform: rotate(-25deg) translate(134%, -40%) scale(4.5)`;
   } else if (regs[index] === `spb`) {
+    state.interval = setTimeout(mapSlide, Timeouts.regs);
     mapSvg.style = `transform: rotate(-60deg) translate(118%, 58%) scale(3.1);`;
   } else if (regs[index] === `krasnoyarsk`) {
+    state.interval = setTimeout(mapSlide, Timeouts.regs);
     mapSvg.style = `transform: translate(-7%, -18%) scale(1.3)`;
   } else if (regs[index] === `nnovgorod`) {
+    state.interval = setTimeout(mapSlide, Timeouts.regs);
     mapSvg.style = `transform: translate(96%, -8%) scale(3.2);`;
   } else {
+    state.interval = setTimeout(mapSlide, Timeouts.russia);
     mapSvg.style = ``;
   }
 };
 
-const startMapSlide = (regs) => {
+const startMapSlide = (regs, timeout) => {
   if(regs) {
     state.regs = regs;
     return
   }
   regs = state.regs;
+  const rusTimeout = Math.round(timeout / ((2 * regs.length) - 1));
+  const regsTimeout = rusTimeout * 2;
 
+  // const rusTimeout = Math.round(timeout / ((3 * regs.length) - 2));
+  // const regsTimeout = rusTimeout * 3;
+  Timeouts = {
+    russia: rusTimeout,
+    regs: regsTimeout
+  }
+  console.log(Timeouts)
   state.slides = regs.map(reg => bigNum$1.querySelector(`.slide--${reg}`));
 
   if (state.interval) {
     mapSvg.style = ``;
     clearInterval(state.interval);
   }
-  // setTimeout(() => {
-    mapSlide(`russia`);
-    state.interval = setInterval(mapSlide, TIMEOUT);
-  // }, TIMEOUT);
+
+  mapSlide(`russia`);
+  // state.interval = setTimeout(mapSlide, Timeouts.russia);
+
 };
 
 export default {

@@ -10,7 +10,7 @@ const Timeouts = {
   total: 5000,
   last: 5000,
   socnet: 5000,
-  map: 12000,
+  map: 10000,
   wall: 10000
 };
 
@@ -22,6 +22,17 @@ const slideIds = sliderBtns.map((btn) => {
 });
 const bullit = document.querySelector(`.bullit`);
 const wallPost = document.getElementById(`wallpost`);
+
+const fullscreen3 = (element) => {
+  if (element.requestFullScreen) {
+    element.requestFullScreen();
+  } else if (element.mozRequestFullScreen) {
+    element.mozRequestFullScreen();
+  } else if (element.webkitRequestFullScreen) {
+    element.webkitRequestFullScreen();
+  }
+};
+
 
 const growNum = (node, num) => {
   let temp = 0;
@@ -91,7 +102,7 @@ const Slider = {
 
       } else if (slideId === `map`) {
 
-        mapScreen.startSlide();
+        mapScreen.startSlide(null, Timeouts.map);
 
       } else if (slideId === `last`) {
 
@@ -114,7 +125,7 @@ const Slider = {
 
       if(slideId !== `map`) {
         mapScreen.state.svg.style = ``;
-        clearInterval(mapScreen.state.interval);
+        clearTimeout(mapScreen.state.interval);
       }
       totalScreen.dataV.isActive = (slideId === `total`);
       mapScreen.state.isActive = (slideId === `map`);
