@@ -507,7 +507,7 @@ const Slider = {
   },
 
   slide(slideId, flag) {
-
+    clearTimeout(this.interval);
     if (slideId === `wall` || (slideId && slideId !== slideIds[this.index]) ) {
       const btn = document.querySelector(`[data-slide="${slideId}"]`);
       const currentControl = sliderControl.querySelector(`.slider-control--active`);
@@ -561,7 +561,6 @@ const Slider = {
       }
       totalScreen.dataV.isActive = (slideId === `total`);
       map.state.isActive = (slideId === `map`);
-      clearTimeout(this.interval);
       if (this.autoPlay) {
         this.interval = setTimeout(() => {
           this.next();
@@ -602,11 +601,7 @@ window.addEventListener(`keydown`, (e) => {
       stopAutoPlay();
       Slider.prev();
       break;
-    case `w`:
-    case `ц`: //Цтена
-      stopAutoPlay();
-      Slider.slide(`wall`);
-      break;
+
 
     case `1`:
       stopAutoPlay();
@@ -643,12 +638,16 @@ window.addEventListener(`keydown`, (e) => {
     break;
 
     case `Enter`: //enter
-      if (!Slider.autoPlay) {
-        Slider.autoPlay = true;
+    if (!Slider.autoPlay) {
+      Slider.autoPlay = true;
+      if(Slider.btn.dataset.slide === `wall`) {
+        Slider.next();
+      } else {
         setTimeout(() => {
           Slider.next();
         }, Slider.timeout);
       }
+    }
       sliderControl.classList.add(`slider-controls--animated`);
   }
 });
