@@ -13,9 +13,11 @@ function numberWithSpaces(x) {
   return x;
 }
 
-var getData = fetch(`https://dashboard.sn-mg.ru/service/monitoring/dashboards?reportId=12253`).then(response => {
+var getData = fetch(`https://dashboard.sn-mg.ru/service/monitoring/dashboards?reportId=12253`)
+.then(response => response.json())
+.catch(err => {
+  console.error(err);
 
-  return response.json();
 });
 
 const totalNumber = document.getElementById(`total-number`);
@@ -106,7 +108,7 @@ const showLast = (current) => {
     bigNum.classList.remove(`big-num--up`);
     bigNum.classList.add(`big-num--down`);
   }
-  bigNum.dataset.average = average;
+  bigNum.dataset.average = average * (0.8 + (Math.random() * 0.2));
 };
 
 var last = {
@@ -114,7 +116,6 @@ var last = {
   show: showLast
 };
 
-const TIMEOUT = 3300;
 const bigNum$1 = document.querySelector(`#map .slider`);
 const mapSvg = document.querySelector(`.main-map`);
 const adoptMapData = (periods) => {
@@ -170,7 +171,7 @@ const paintMap = (total) => {
     }
   }
   const arr = [...currentRegs];
-  arr.sort((a, b) => total.regs[a] < total.regs[b]);
+  arr.sort((a, b) => total.regs[a] < total.regs[b]).unshift(`russia`);
   return arr;
 };
 const state = {
@@ -178,12 +179,14 @@ const state = {
   interval: null,
   svg: mapSvg
 };
-
+let Timeouts$1 = {
+  russia: 0,
+  regs: 0
+};
 
 const mapSlide = (city) => {
   const slides = state.slides;
   const regs = state.regs;
-
   const active = slides.find(slide => slide.classList.contains(`slide--active`));
 
   if (active) {
@@ -193,48 +196,70 @@ const mapSlide = (city) => {
     }
   }
   let index = 0;
-  if(city === `moscow`) {
+  if(city === `russia`) {
     index = 0;
   } else {
     index = (slides.indexOf(active) + 1) % slides.length;
   }
 
   slides[index].classList.add(`slide--active`);
-  const region = document.getElementById(regs[index]);
-  slides[index].dataset.region = region.id;
-  region.style.opacity = `1`;
 
+    const region = document.getElementById(regs[index]);
+    if(region) {
+    slides[index].dataset.region = region.id;
+    region.style.opacity = `1`;
+}
+  clearTimeout(state.interval);
   if (regs[index] === `moscow`) {
+    state.interval = setTimeout(mapSlide, Timeouts$1.regs);
     mapSvg.style = `transform: rotate(-55deg) translate(178%, 26%) scale(4.7)`;
   } else if (regs[index] === `perm`) {
+    state.interval = setTimeout(mapSlide, Timeouts$1.regs);
     mapSvg.style = `transform: rotate(-35deg) translate(77%, -29%) scale(3.2);`;
   } else if (regs[index] === `tatarstan`) {
+    state.interval = setTimeout(mapSlide, Timeouts$1.regs);
     mapSvg.style = `transform: rotate(-25deg) translate(134%, -40%) scale(4.5)`;
   } else if (regs[index] === `spb`) {
+    state.interval = setTimeout(mapSlide, Timeouts$1.regs);
     mapSvg.style = `transform: rotate(-60deg) translate(118%, 58%) scale(3.1);`;
   } else if (regs[index] === `krasnoyarsk`) {
+    state.interval = setTimeout(mapSlide, Timeouts$1.regs);
     mapSvg.style = `transform: translate(-7%, -18%) scale(1.3)`;
   } else if (regs[index] === `nnovgorod`) {
+    state.interval = setTimeout(mapSlide, Timeouts$1.regs);
     mapSvg.style = `transform: translate(96%, -8%) scale(3.2);`;
   } else {
+    state.interval = setTimeout(mapSlide, Timeouts$1.russia);
     mapSvg.style = ``;
   }
 };
 
-const startMapSlide = (regs) => {
+const startMapSlide = (regs, timeout) => {
   if(regs) {
     state.regs = regs;
     return
   }
   regs = state.regs;
+  const rusTimeout = Math.round(timeout / ((2 * regs.length) - 1));
+  const regsTimeout = rusTimeout * 2;
 
+  // const rusTimeout = Math.round(timeout / ((3 * regs.length) - 2));
+  // const regsTimeout = rusTimeout * 3;
+  Timeouts$1 = {
+    russia: rusTimeout,
+    regs: regsTimeout
+  };
+  console.log(Timeouts$1);
   state.slides = regs.map(reg => bigNum$1.querySelector(`.slide--${reg}`));
 
   if (state.interval) {
+    mapSvg.style = ``;
     clearInterval(state.interval);
   }
-  mapSlide(`moscow`);
-  state.interval = setInterval(mapSlide, TIMEOUT);
+
+  mapSlide(`russia`);
+  // state.interval = setTimeout(mapSlide, Timeouts.russia);
+
 };
 
 var map = {
@@ -247,6 +272,7 @@ var map = {
 const socnets = document.querySelector(`.socnets`);
 
 const buildStatsSn = (periods) => {
+  console.log(periods);
   const prev = [...periods].reverse().find(period => (new Date() >= period.timeStamp));
   const to = periods.find(period => (new Date() < period.timeStamp)) || prev;
   const current = {
@@ -254,6 +280,9 @@ const buildStatsSn = (periods) => {
     to: to,
     get diff() {
       return this.to.total() - this.from.total();
+    },
+    get percent() {
+      return (new Date() - this.from.timeStamp) / ( this.to.timeStamp - this.from.timeStamp);
     },
     get total() {
       const total = {
@@ -263,7 +292,7 @@ const buildStatsSn = (periods) => {
       let max = 0;
       for (const sn in this.to.snets) {
         if (this.to.snets.hasOwnProperty(sn)) {
-          const percent = Math.round(100 * (this.to.snets[sn] - this.from.snets[sn]) / this.diff);
+          const percent = Math.round(100*(this.from.snets[sn] + ((this.to.snets[sn] - this.from.snets[sn]) * this.percent)) / (this.from.total() + this.diff * this.percent ));
           if (percent > max) {
             total.max = sn;
             max = percent;
@@ -280,13 +309,16 @@ const buildStatsSn = (periods) => {
       return total;
     }
   };
+  console.log(current, current.total.snets);
   return current.total.snets;
 };
 
 const printStatsSn = (total) => {
   for (const sn in total) {
-    if (total.hasOwnProperty(sn)) {
-      socnets.querySelector(`#${sn}`).innerText = total[sn];
+    if (sn !== undefined && total.hasOwnProperty(sn)) {
+      console.log(sn, socnets.querySelector(`#${sn}`));
+      if(socnets.querySelector(`#${sn}`)){
+      socnets.querySelector(`#${sn}`).innerText = total[sn];}
     }
   }
   socnets.classList.add(`animated`);
@@ -298,18 +330,12 @@ var socnet = {
   print: printStatsSn
 };
 
-const fullscreen3$1 = (element) => {
-  if (element.requestFullScreen) {
-    element.requestFullScreen();
-  } else if (element.mozRequestFullScreen) {
-    element.mozRequestFullScreen();
-  } else if (element.webkitRequestFullScreen) {
-    element.webkitRequestFullScreen();
-  }
-};
-
 const adoptTotal = (json => {
-
+  if(json) {
+    window.localStorage.setItem(`serverData`, JSON.stringify(json));
+  } else  {
+    json = JSON.parse(window.localStorage.getItem(`serverData`));
+  }
   const periods = {total:[], last:[], map:[]};
   const mapArr = [];
   const snArr = [];
@@ -385,91 +411,22 @@ const adoptTotal = (json => {
   }
   periods.last = last$$1;
 
-
-
   return periods;
 
 });
 
 const reNewData = () => {
-  getData.then(adoptTotal).then(total => {
+  getData.then(adoptTotal)
+  .then(total => {
     totalScreen.reCountTotal(total.total);
     last.show(last.build(total.last));
     socnet.print(socnet.build(total.sn));
 
     return total.map
-  }).then(map.adopt).then(map.paint).then(map.startSlide)
-  .then(() => {
-    window.addEventListener(`keydown`, (e) => {
-      // console.log(e.key);
-      switch (e.key) {
-        case `f`:
-        case `а`:
-          fullscreen3$1(document.documentElement);
-          break;
-
-        case ` `: //space
-          stopAutoPlay();
-          Slider.next();
-          break;
-
-        case `Backspace`: //backspace
-          stopAutoPlay();
-          Slider.prev();
-          break;
-        case `w`:
-        case `ц`: //Цтена
-          stopAutoPlay();
-          Slider.slide(`wall`);
-          break;
-
-        case `1`:
-          stopAutoPlay();
-          Slider.slide(`total`);
-          break;
-        case `2`:
-          stopAutoPlay();
-          Slider.slide(`socnet`);
-          break;
-        case `3`:
-          stopAutoPlay();
-          Slider.slide(`last`);
-          break;
-        case `4`:
-          stopAutoPlay();
-          Slider.slide(`map`);
-          break;
-
-        case `5`: //wall w/o post
-          stopAutoPlay();
-          Slider.slide(`wall`, true);
-          break;
-        case `6`: //wall with post
-          stopAutoPlay();
-          Slider.slide(`wall`);
-          wallPost.hidden = false;
-          wallPost.style = `
-            animation: none;
-            opacity: 1;
-            left: 0;
-            right: 0;
-          `;
-          document.body.appendChild(wallPost);
-        break;
-
-        case `Enter`: //enter
-          if (!Slider.autoPlay) {
-            Slider.autoPlay = true;
-            setTimeout(() => {
-              Slider.next();
-            }, Slider.timeout);
-          }
-          sliderControl.classList.add(`slider-controls--animated`);
-      }
-    });
   })
+  .then(map.adopt).then(map.paint).then(map.startSlide)
   .catch(error => {console.error(error);});
-  };
+};
 
 
 const dataStorage = {
@@ -496,14 +453,25 @@ const Timeouts = {
   wall: 10000
 };
 
-const sliderControl$1 = document.querySelector(`.slider-controls`);
-const sliderBtns = [...sliderControl$1.querySelectorAll(`.slider-control`)];
+const sliderControl = document.querySelector(`.slider-controls`);
+const sliderBtns = [...sliderControl.querySelectorAll(`.slider-control`)];
 const slideIds = sliderBtns.map((btn) => {
   btn.style = `animation-duration: ${Timeouts[btn.dataset.slide]}ms`;
   return btn.dataset.slide;
 });
 const bullit = document.querySelector(`.bullit`);
-const wallPost$1 = document.getElementById(`wallpost`);
+const wallPost = document.getElementById(`wallpost`);
+
+const fullscreen3 = (element) => {
+  if (element.requestFullScreen) {
+    element.requestFullScreen();
+  } else if (element.mozRequestFullScreen) {
+    element.mozRequestFullScreen();
+  } else if (element.webkitRequestFullScreen) {
+    element.webkitRequestFullScreen();
+  }
+};
+
 
 const growNum = (node, num) => {
   let temp = 0;
@@ -517,7 +485,7 @@ const growNum = (node, num) => {
   }, 20);
 };
 
-const Slider$1 = {
+const Slider = {
   btns: sliderBtns,
   slideIds: slideIds,
   _timeout: Timeouts,
@@ -546,10 +514,10 @@ const Slider$1 = {
   },
 
   slide(slideId, flag) {
-
+    clearTimeout(this.interval);
     if (slideId === `wall` || (slideId && slideId !== slideIds[this.index]) ) {
       const btn = document.querySelector(`[data-slide="${slideId}"]`);
-      const currentControl = sliderControl$1.querySelector(`.slider-control--active`);
+      const currentControl = sliderControl.querySelector(`.slider-control--active`);
       if (currentControl) {
         currentControl.classList.remove(`slider-control--active`);
       }
@@ -562,7 +530,7 @@ const Slider$1 = {
       }
       const newSlide = document.getElementById(slideId);
       newSlide.classList.add(`iframe--active`);
-      wallPost$1.remove();
+      wallPost.remove();
 
       if (slideId === `socnet`) {
 
@@ -573,7 +541,7 @@ const Slider$1 = {
 
       } else if (slideId === `map`) {
 
-        map.startSlide();
+        map.startSlide(null, Timeouts.map);
 
       } else if (slideId === `last`) {
 
@@ -586,21 +554,20 @@ const Slider$1 = {
 
         // if(flag) {
         if(flag) {
-          wallPost$1.remove();
+          wallPost.remove();
         } else {
-          wallPost$1.hidden = false;
-          wallPost$1.style = `animation-duration: ${Slider$1._timeout.wall / 2}ms; animation-delay: ${Slider$1._timeout.wall / 2}ms`;
-          document.body.appendChild(wallPost$1);
+          wallPost.hidden = false;
+          wallPost.style = `animation-duration: ${Slider._timeout.wall / 2}ms; animation-delay: ${Slider._timeout.wall / 2}ms`;
+          document.body.appendChild(wallPost);
         }
       }
 
       if(slideId !== `map`) {
         map.state.svg.style = ``;
-        clearInterval(map.state.interval);
+        clearTimeout(map.state.interval);
       }
       totalScreen.dataV.isActive = (slideId === `total`);
       map.state.isActive = (slideId === `map`);
-      clearTimeout(this.interval);
       if (this.autoPlay) {
         this.interval = setTimeout(() => {
           this.next();
@@ -613,15 +580,15 @@ const Slider$1 = {
 };
 
 let autoPlay = setTimeout(() => {
-  Slider$1.next();
-}, Slider$1.timeout);
+  Slider.next();
+}, Slider.timeout);
 
-const stopAutoPlay$1 = () => {
-  Slider$1.autoPlay = false;
-  clearTimeout(Slider$1.interval);
+const stopAutoPlay = () => {
+  Slider.autoPlay = false;
+  clearTimeout(Slider.interval);
   clearTimeout(autoPlay);
-  Slider$1.interval = null;
-  sliderControl$1.classList.remove(`slider-controls--animated`);
+  Slider.interval = null;
+  sliderControl.classList.remove(`slider-controls--animated`);
 };
 
 window.addEventListener(`keydown`, (e) => {
@@ -633,62 +600,62 @@ window.addEventListener(`keydown`, (e) => {
       break;
 
     case ` `: //space
-      stopAutoPlay$1();
-      Slider$1.next();
+      stopAutoPlay();
+      Slider.next();
       break;
 
     case `Backspace`: //backspace
-      stopAutoPlay$1();
-      Slider$1.prev();
-      break;
-    case `w`:
-    case `ц`: //Цтена
-      stopAutoPlay$1();
-      Slider$1.slide(`wall`);
+      stopAutoPlay();
+      Slider.prev();
       break;
 
+
     case `1`:
-      stopAutoPlay$1();
-      Slider$1.slide(`total`);
+      stopAutoPlay();
+      Slider.slide(`total`);
       break;
     case `2`:
-      stopAutoPlay$1();
-      Slider$1.slide(`socnet`);
+      stopAutoPlay();
+      Slider.slide(`socnet`);
       break;
     case `3`:
-      stopAutoPlay$1();
-      Slider$1.slide(`last`);
+      stopAutoPlay();
+      Slider.slide(`last`);
       break;
     case `4`:
-      stopAutoPlay$1();
-      Slider$1.slide(`map`);
+      stopAutoPlay();
+      Slider.slide(`map`);
       break;
 
     case `5`: //wall w/o post
-      stopAutoPlay$1();
-      Slider$1.slide(`wall`, true);
+      stopAutoPlay();
+      Slider.slide(`wall`, true);
       break;
     case `6`: //wall with post
-      stopAutoPlay$1();
-      Slider$1.slide(`wall`);
-      wallPost$1.hidden = false;
-      wallPost$1.style = `
+      stopAutoPlay();
+      Slider.slide(`wall`);
+      wallPost.hidden = false;
+      wallPost.style = `
         animation: none;
         opacity: 1;
         left: 0;
         right: 0;
       `;
-      document.body.appendChild(wallPost$1);
+      document.body.appendChild(wallPost);
     break;
 
     case `Enter`: //enter
-      if (!Slider$1.autoPlay) {
-        Slider$1.autoPlay = true;
+    if (!Slider.autoPlay) {
+      Slider.autoPlay = true;
+      if(Slider.btn.dataset.slide === `wall`) {
+        Slider.next();
+      } else {
         setTimeout(() => {
-          Slider$1.next();
-        }, Slider$1.timeout);
+          Slider.next();
+        }, Slider.timeout);
       }
-      sliderControl$1.classList.add(`slider-controls--animated`);
+    }
+      sliderControl.classList.add(`slider-controls--animated`);
   }
 });
 

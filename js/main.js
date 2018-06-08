@@ -23,6 +23,17 @@ const slideIds = sliderBtns.map((btn) => {
 const bullit = document.querySelector(`.bullit`);
 const wallPost = document.getElementById(`wallpost`);
 
+const fullscreen3 = (element) => {
+  if (element.requestFullScreen) {
+    element.requestFullScreen();
+  } else if (element.mozRequestFullScreen) {
+    element.mozRequestFullScreen();
+  } else if (element.webkitRequestFullScreen) {
+    element.webkitRequestFullScreen();
+  }
+};
+
+
 const growNum = (node, num) => {
   let temp = 0;
   const delta = num / 50;
@@ -64,7 +75,7 @@ const Slider = {
   },
 
   slide(slideId, flag) {
-
+    clearTimeout(this.interval);
     if (slideId === `wall` || (slideId && slideId !== slideIds[this.index]) ) {
       const btn = document.querySelector(`[data-slide="${slideId}"]`);
       const currentControl = sliderControl.querySelector(`.slider-control--active`);
@@ -91,7 +102,7 @@ const Slider = {
 
       } else if (slideId === `map`) {
 
-        mapScreen.startSlide();
+        mapScreen.startSlide(null, Timeouts.map);
 
       } else if (slideId === `last`) {
 
@@ -114,11 +125,10 @@ const Slider = {
 
       if(slideId !== `map`) {
         mapScreen.state.svg.style = ``;
-        clearInterval(mapScreen.state.interval);
+        clearTimeout(mapScreen.state.interval);
       }
       totalScreen.dataV.isActive = (slideId === `total`);
       mapScreen.state.isActive = (slideId === `map`);
-      clearTimeout(this.interval);
       if (this.autoPlay) {
         this.interval = setTimeout(() => {
           this.next();
@@ -159,11 +169,7 @@ window.addEventListener(`keydown`, (e) => {
       stopAutoPlay();
       Slider.prev();
       break;
-    case `w`:
-    case `ц`: //Цтена
-      stopAutoPlay();
-      Slider.slide(`wall`);
-      break;
+
 
     case `1`:
       stopAutoPlay();
@@ -200,12 +206,16 @@ window.addEventListener(`keydown`, (e) => {
     break;
 
     case `Enter`: //enter
-      if (!Slider.autoPlay) {
-        Slider.autoPlay = true;
+    if (!Slider.autoPlay) {
+      Slider.autoPlay = true;
+      if(Slider.btn.dataset.slide === `wall`) {
+        Slider.next();
+      } else {
         setTimeout(() => {
           Slider.next();
         }, Slider.timeout);
       }
+    }
       sliderControl.classList.add(`slider-controls--animated`);
   }
 })

@@ -1,10 +1,8 @@
 import numberWithSpaces from "./lib/numberWithSpaces";
 import load from "./lib/load";
-const TIMEOUT = 3300;
-const bigNum = document.querySelector(`#map .slider`);
+const TIMEOUT = 2000;
+const bigNum$1 = document.querySelector(`#map .slider`);
 const mapSvg = document.querySelector(`.main-map`);
-let interval = 0;
-
 const adoptMapData = (periods) => {
   const prev = [...periods].reverse().find(period => (new Date() >= period.timeStamp));
   const to = periods.find(period => (new Date() < period.timeStamp)) || periods[periods.length - 1];
@@ -53,12 +51,12 @@ const paintMap = (total) => {
         currentRegs.push(reg);
         region.style.fill = `rgba(0, 109, 196, ${(1 - value)})`;
         region.style.opacity = `0.3`;
-        bigNum.querySelector(`.slide--${reg} .big-num`).innerHTML = numberWithSpaces(total.regs[reg]);
+        bigNum$1.querySelector(`.slide--${reg} .big-num`).innerHTML = numberWithSpaces(total.regs[reg]);
       }
     }
   }
   const arr = [...currentRegs];
-  arr.sort((a, b) => total.regs[a] < total.regs[b]);
+  arr.sort((a, b) => total.regs[a] < total.regs[b]).unshift(`russia`);
   return arr;
 };
 const state = {
@@ -66,12 +64,14 @@ const state = {
   interval: null,
   svg: mapSvg
 };
-
+let Timeouts = {
+  russia: 0,
+  regs: 0
+}
 
 const mapSlide = (city) => {
   const slides = state.slides;
   const regs = state.regs;
-
   const active = slides.find(slide => slide.classList.contains(`slide--active`));
 
   if (active) {
@@ -81,49 +81,71 @@ const mapSlide = (city) => {
     }
   }
   let index = 0;
-  if(city === `moscow`) {
+  if(city === `russia`) {
     index = 0;
   } else {
     index = (slides.indexOf(active) + 1) % slides.length;
   }
 
   slides[index].classList.add(`slide--active`);
-  const region = document.getElementById(regs[index]);
-  slides[index].dataset.region = region.id;
-  region.style.opacity = `1`;
 
+    const region = document.getElementById(regs[index]);
+    if(region) {
+    slides[index].dataset.region = region.id;
+    region.style.opacity = `1`;
+}
+  clearTimeout(state.interval);
   if (regs[index] === `moscow`) {
-    mapSvg.style = `transform: rotate(-55deg) translate(178%, 26%) scale(4.7)`
+    state.interval = setTimeout(mapSlide, Timeouts.regs);
+    mapSvg.style = `transform: rotate(-55deg) translate(178%, 26%) scale(4.7)`;
   } else if (regs[index] === `perm`) {
-    mapSvg.style = `transform: rotate(-35deg) translate(77%, -29%) scale(3.2);`
+    state.interval = setTimeout(mapSlide, Timeouts.regs);
+    mapSvg.style = `transform: rotate(-35deg) translate(77%, -29%) scale(3.2);`;
   } else if (regs[index] === `tatarstan`) {
-    mapSvg.style = `transform: rotate(-25deg) translate(134%, -40%) scale(4.5)`
+    state.interval = setTimeout(mapSlide, Timeouts.regs);
+    mapSvg.style = `transform: rotate(-25deg) translate(134%, -40%) scale(4.5)`;
   } else if (regs[index] === `spb`) {
-    mapSvg.style = `transform: rotate(-60deg) translate(118%, 58%) scale(3.1);`
+    state.interval = setTimeout(mapSlide, Timeouts.regs);
+    mapSvg.style = `transform: rotate(-60deg) translate(118%, 58%) scale(3.1);`;
   } else if (regs[index] === `krasnoyarsk`) {
-    mapSvg.style = `transform: translate(-7%, -18%) scale(1.3)`
+    state.interval = setTimeout(mapSlide, Timeouts.regs);
+    mapSvg.style = `transform: translate(-7%, -18%) scale(1.3)`;
   } else if (regs[index] === `nnovgorod`) {
-    mapSvg.style = `transform: translate(96%, -8%) scale(3.2);`
+    state.interval = setTimeout(mapSlide, Timeouts.regs);
+    mapSvg.style = `transform: translate(96%, -8%) scale(3.2);`;
   } else {
+    state.interval = setTimeout(mapSlide, Timeouts.russia);
     mapSvg.style = ``;
   }
 };
 
-const startMapSlide = (regs) => {
+const startMapSlide = (regs, timeout) => {
   if(regs) {
-    state.regs = regs
+    state.regs = regs;
     return
   }
   regs = state.regs;
+  const rusTimeout = Math.round(timeout / ((2 * regs.length) - 1));
+  const regsTimeout = rusTimeout * 2;
 
-  state.slides = regs.map(reg => bigNum.querySelector(`.slide--${reg}`));
+  // const rusTimeout = Math.round(timeout / ((3 * regs.length) - 2));
+  // const regsTimeout = rusTimeout * 3;
+  Timeouts = {
+    russia: rusTimeout,
+    regs: regsTimeout
+  }
+  console.log(Timeouts)
+  state.slides = regs.map(reg => bigNum$1.querySelector(`.slide--${reg}`));
 
   if (state.interval) {
+    mapSvg.style = ``;
     clearInterval(state.interval);
   }
-  mapSlide(`moscow`);
-  state.interval = setInterval(mapSlide, TIMEOUT);
-}
+
+  mapSlide(`russia`);
+  // state.interval = setTimeout(mapSlide, Timeouts.russia);
+
+};
 
 export default {
   adopt: adoptMapData,
