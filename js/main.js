@@ -10,7 +10,7 @@ const Timeouts = {
   total: 5000,
   last: 5000,
   socnet: 5000,
-  map: 10000,
+  map: 9800,
   wall: 10000
 };
 

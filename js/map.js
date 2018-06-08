@@ -57,9 +57,8 @@ const paintMap = (total) => {
       }
     }
   }
-  const arr = [...currentRegs].reverse();
-  arr.unshift(arr.pop());
-  console.log(arr);
+  const arr = [...currentRegs];
+  arr.sort((a, b) => total.regs[a] < total.regs[b]);
   return arr;
 };
 const state = {
@@ -100,7 +99,7 @@ const mapSlide = (city) => {
   } else if (regs[index] === `tatarstan`) {
     mapSvg.style = `transform: rotate(-25deg) translate(134%, -40%) scale(4.5)`
   } else if (regs[index] === `spb`) {
-    mapSvg.style = `transform: translate(95%, 48%) scale(3);`
+    mapSvg.style = `transform: rotate(-60deg) translate(118%, 58%) scale(3.1);`
   } else if (regs[index] === `krasnoyarsk`) {
     mapSvg.style = `transform: translate(-7%, -18%) scale(1.3)`
   } else if (regs[index] === `nnovgorod`) {
